@@ -26,11 +26,29 @@ export default function Checkout() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate order processing
-    setTimeout(() => {
-      clearCart()
-      router.push("/order-confirmation")
-    }, 1000)
+    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+
+    try {
+      const response = await fetch("/api/send-order-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ formData, cart, total }),
+      })
+
+      if (response.ok) {
+        clearCart()
+        router.push("/order-confirmation")
+      } else {
+        throw new Error("Failed to send order email")
+      }
+    } catch (error) {
+      console.error("Error submitting order:", error)
+      alert("There was an error submitting your order. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)

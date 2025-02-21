@@ -1,46 +1,24 @@
-.carousel {
-  position: relative;
+.carouselContainer {
   width: 100%;
-  height: 500px;
+  margin: auto;
   overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.imageWrapper {
-  position: absolute;
-  inset: 0;
-}
-
-.carouselButton {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(255, 255, 255, 0.5);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+.customCarousel .carousel .slide {
   display: flex;
-  align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.3s;
+  align-items: center;
 }
 
-.carouselButton:hover {
-  background-color: rgba(255, 255, 255, 0.75);
+.carouselSlide {
+  position: relative;
 }
 
-.prevButton {
-  left: 16px;
+.carouselImage {
+  border-radius: 10px;
+  object-fit: cover;
+  width: 100%;
+  height: auto;
 }
-
-.nextButton {
-  right: 16px;
-}
-
-.buttonIcon {
-  width: 24px;
-  height: 24px;
-  color: black;
-}
-
