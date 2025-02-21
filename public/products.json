@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "name": "Summer Breeze Bikini",
+    "price": 79.99,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "image": "./assets/producto1.jpg",
+    "category": "bikinis"
+  },
+  {
+    "id": 2,
+    "name": "Tropical Paradise Bikini",
+    "price": 89.99,
+    "sizes": ["S", "M", "L", "XL"],
+    "image": "./assets/producto2.jpg",
+    "category": "bikinis"
+  },
+  {
+    "id": 3,
+    "name": "Lace Dream Lingerie Set",
+    "price": 69.99,
+    "sizes": ["XS", "S", "M", "L"],
+    "image": "./assets/producto3.jpg",
+    "category": "ropa interior"
+  },
+  {
+    "id": 4,
+    "name": "Silk Touch Underwear",
+    "price": 39.99,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "image": "./assets/producto4.jpg",
+    "category": "ropa interior"
+  },
+  {
+    "id": 5,
+    "name": "Elegant Evening Ensemble",
+    "price": 129.99,
+    "sizes": ["S", "M", "L"],
+    "image": "./assets/producto5.jpg",
+    "category": "conjuntos"
+  },
+  {
+    "id": 6,
+    "name": "Casual Chic Set",
+    "price": 99.99,
+    "sizes": ["XS", "S", "M", "L", "XL"],
+    "image": "./assets/producto6.jpg",
+    "category": "conjuntos"
+  }
+]
+
