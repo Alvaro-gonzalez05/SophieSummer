@@ -21,9 +21,9 @@ const Navbar = () => {
             </Link>
           </div>
           <div className={styles.desktopMenu}>
-            <NavLink href="/">Home</NavLink>
-            <NavLink href="/about">About Us</NavLink>
-            <NavLink href="/contact">Contact</NavLink>
+            <NavLink href="/">Inicio</NavLink>
+            <NavLink href="/about">Sobre Nosotros</NavLink>
+            <NavLink href="/contact">Contactanos</NavLink>
           </div>
           <div className={styles.actions}>
             <button onClick={openCart} className={styles.cartButton}>

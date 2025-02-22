@@ -52,6 +52,15 @@
     "image": "./assets/producto6.jpg",
     "category": "conjuntos",
     "stock": 10
+  },
+  {
+    "id": 7,
+    "name": "Tropical Paradise Bikini",
+    "price": 89.99,
+    "sizes": ["S", "M", "L", "XL"],
+    "image": "./assets/producto6.jpg",
+    "category": "bikinis",
+    "stock": 10
   }
 ]
 

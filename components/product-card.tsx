@@ -73,7 +73,7 @@ const ProductCard = ({ product, addToCart }) => {
             animate={isAdding ? { opacity: 0 } : { opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
-            {product.stock === 0 ? "Agotado" : "Add to Cart"}
+            {product.stock === 0 ? "Agotado" : "Añadir al Carrito"}
           </motion.span>
         </motion.button>
       </div>

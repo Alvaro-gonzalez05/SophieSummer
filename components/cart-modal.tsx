@@ -31,13 +31,13 @@ const CartModal = () => {
           >
             <div className={styles.content}>
               <div className={styles.header}>
-                <h2 className={styles.title}>Your Cart</h2>
+                <h2 className={styles.title}>Tu Carrito</h2>
                 <button onClick={closeCart} className={styles.closeButton}>
                   <X className={styles.closeIcon} />
                 </button>
               </div>
               {cart.length === 0 ? (
-                <p>Your cart is empty.</p>
+                <p>Tu carrito esta vacio...</p>
               ) : (
                 <>
                   <ul className={styles.itemList}>
@@ -45,7 +45,7 @@ const CartModal = () => {
                       <li key={`${item.id}-${item.selectedSize}`} className={styles.item}>
                         <div className={styles.itemInfo}>
                           <h3 className={styles.itemName}>{item.name}</h3>
-                          <p className={styles.itemSize}>Size: {item.selectedSize}</p>
+                          <p className={styles.itemSize}>Talle  : {item.selectedSize}</p>
                           <p className={styles.itemPrice}>${item.price.toFixed(2)}</p>
                         </div>
                         <div className={styles.itemActions}>
@@ -66,7 +66,7 @@ const CartModal = () => {
                   <div className={styles.footer}>
                     <p className={styles.total}>Total: ${total.toFixed(2)}</p>
                     <Link href="/checkout" onClick={closeCart} className={styles.checkoutButton}>
-                      Proceed to Checkout
+                      Finalizar Compra...
                     </Link>
                   </div>
                 </>

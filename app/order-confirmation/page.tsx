@@ -8,10 +8,10 @@ export default function OrderConfirmation() {
       <div className={styles.card}>
         <div className={styles.content}>
           <CheckCircle className={styles.icon} />
-          <h2 className={styles.title}>Order Confirmed!</h2>
-          <p className={styles.message}>Thank you for your purchase. Your order has been successfully placed.</p>
+          <h2 className={styles.title}>Pedido de Orden Enviada!!</h2>
+          <p className={styles.message}>Muchas gracias por el pedido. En breve uno de nuestros vendedores se contactara, con usteded ,para terminar de confirmar la orden y abonar la misma.... </p>
           <Link href="/" className={styles.button}>
-            Return to Home
+            Volver a inicio
           </Link>
         </div>
       </div>

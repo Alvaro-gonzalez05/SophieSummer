@@ -56,11 +56,11 @@ export default function Checkout() {
   return (
     <main className={styles.main}>
       <BackButton />
-      <h1 className={styles.title}>Checkout</h1>
+      <h1 className={styles.title}>Confirmar Orden</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
           <label htmlFor="name" className={styles.label}>
-            Name
+            Nombre
           </label>
           <input
             type="text"
@@ -74,7 +74,7 @@ export default function Checkout() {
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="email" className={styles.label}>
-            Email
+            Mail
           </label>
           <input
             type="email"
@@ -88,7 +88,7 @@ export default function Checkout() {
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="address" className={styles.label}>
-            Address
+            Direccion
           </label>
           <input
             type="text"
@@ -102,7 +102,7 @@ export default function Checkout() {
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="phone" className={styles.label}>
-            Phone
+            Numero de Telefono
           </label>
           <input
             type="tel"
@@ -115,7 +115,7 @@ export default function Checkout() {
           />
         </div>
         <div className={styles.orderSummary}>
-          <h2 className={styles.summaryTitle}>Order Summary</h2>
+          <h2 className={styles.summaryTitle}>Detalle de orden</h2>
           <ul className={styles.itemList}>
             {cart.map((item) => (
               <li key={`${item.id}-${item.selectedSize}`} className={styles.item}>
@@ -145,7 +145,7 @@ export default function Checkout() {
             animate={isSubmitting ? { opacity: 0 } : { opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
-            Place Order
+            Pasar a Finalizar Compra
           </motion.span>
         </motion.button>
       </form>
