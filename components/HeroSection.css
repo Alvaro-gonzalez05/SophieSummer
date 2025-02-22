@@ -1,0 +1,103 @@
+.hero-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-left: 50px;
+    width: 100vw;
+    height: 100vh;
+  
+ 
+    background: white;
+    border-radius: 10px;
+}
+body {
+    overflow-x: hidden;
+  }
+  
+#root {
+    box-sizing: border-box;
+  }
+  
+  .hero-text {
+    flex: 1;
+    padding-right: 50px;
+    animation: slideInFromLeft 1s ease;
+  }
+  
+  .hero-text h1 {
+    font-size: 4.5rem;
+    color: #111;
+  }
+  
+  .hero-text p {
+    font-size: 1rem;
+    color: #555;
+    margin: 20px 0;
+  }
+  
+  .hero-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #000;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .hero-button:hover {
+    background: #444;
+  }
+  
+  .hero-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    animation: slideInFromRight 1s ease;
+  }
+  
+  .imagen {
+    width: 100%;
+    max-width: 500px;
+    height: 500px;
+    border-radius: 20px;
+    mix-blend-mode: multiply;
+  }
+  
+  @media (max-width: 768px){
+    .hero-container{
+        flex-direction: column;
+        height: auto;
+        padding-bottom: 50px;
+        align-items: start;
+    }
+    .hero-image{
+        margin-top: 50px;
+    }
+    .imagen{
+        height: 300px;
+        width: 400px;
+    }
+  }
+
+  @keyframes slideInFromLeft {
+    0% {
+        transform: translateX(-100%); /* Empieza fuera de la pantalla (izquierda) */
+        opacity: 0; /* Opcional: Hacerlo transparente al inicio */
+    }
+    100% {
+        transform: translateX(0); /* Termina en su posición original */
+        opacity: 1; /* Opcional: Hacerlo completamente visible al final */
+    }   
+}
+@keyframes slideInFromRight {
+    0% {
+        transform: translateX(100%); /* Empieza fuera de la pantalla (izquierda) */
+        opacity: 0; /* Opcional: Hacerlo transparente al inicio */
+    }
+    100% {
+        transform: translateX(0); /* Termina en su posición original */
+        opacity: 1; /* Opcional: Hacerlo completamente visible al final */
+    }   
+}

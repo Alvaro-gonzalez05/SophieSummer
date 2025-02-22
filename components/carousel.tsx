@@ -26,7 +26,14 @@ export default function CustomCarousel() {
       >
         {images.map((image, index) => (
           <div key={index}>
-            <Image src={image.src} alt={image.alt} width={1920} height={550} className="imagencarrusel"/>
+            <Image 
+              src={image.src} 
+              alt={image.alt} 
+              width={1920} 
+              height={550} 
+              className={styles.imagencarrusel}
+            />
+
           </div>
         ))}
       </Carousel>

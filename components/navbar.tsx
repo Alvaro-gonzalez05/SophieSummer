@@ -32,7 +32,6 @@ const Navbar = () => {
             </button>
             <div className={styles.mobileMenuButton}>
               <button onClick={() => setIsOpen(!isOpen)} className={styles.menuToggle}>
-                <span className="sr-only">Open main menu</span>
                 {isOpen ? (
                   <X className={styles.menuIcon} aria-hidden="true" />
                 ) : (
