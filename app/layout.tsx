@@ -1,5 +1,6 @@
 import { CartProvider } from "./cart-context"
 import Navbar from "../components/navbar"
+import Footer from "../components/footer"
 import CartModal from "../components/cart-modal"
 import "./globals.css"
 
@@ -9,7 +10,8 @@ export default function RootLayout({ children }) {
       <body>
         <CartProvider>
           <Navbar />
-          {children}
+          <main className="main-content">{children}</main>
+          <Footer />
           <CartModal />
         </CartProvider>
       </body>
@@ -17,10 +19,3 @@ export default function RootLayout({ children }) {
   )
 }
 
-
-
-import './globals.css'
-
-export const metadata = {
-      generator: 'v0.dev'
-    };

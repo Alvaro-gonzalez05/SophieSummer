@@ -19,6 +19,7 @@ const CartModal = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             className={styles.overlay}
             onClick={closeCart}
           />
@@ -26,51 +27,49 @@ const CartModal = () => {
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
-            transition={{ type: "tween" }}
+            transition={{ type: "tween", duration: 0.3 }}
             className={styles.modal}
           >
             <div className={styles.content}>
               <div className={styles.header}>
-                <h2 className={styles.title}>Tu Carrito</h2>
+                <h2 className={styles.title}>Tu carrito</h2>
                 <button onClick={closeCart} className={styles.closeButton}>
                   <X className={styles.closeIcon} />
                 </button>
               </div>
               {cart.length === 0 ? (
-                <p>Tu carrito esta vacio...</p>
+                <p>Your cart is empty.</p>
               ) : (
-                <>
-                  <ul className={styles.itemList}>
-                    {cart.map((item) => (
-                      <li key={`${item.id}-${item.selectedSize}`} className={styles.item}>
-                        <div className={styles.itemInfo}>
-                          <h3 className={styles.itemName}>{item.name}</h3>
-                          <p className={styles.itemSize}>Talle  : {item.selectedSize}</p>
-                          <p className={styles.itemPrice}>${item.price.toFixed(2)}</p>
-                        </div>
-                        <div className={styles.itemActions}>
-                          <button
-                            onClick={() => removeFromCart(item.id, item.selectedSize)}
-                            className={styles.quantityButton}
-                          >
-                            <Minus className={styles.icon} />
-                          </button>
-                          <span className={styles.quantity}>{item.quantity}</span>
-                          <button onClick={() => addToCart(item)} className={styles.quantityButton}>
-                            <Plus className={styles.icon} />
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                  <div className={styles.footer}>
-                    <p className={styles.total}>Total: ${total.toFixed(2)}</p>
-                    <Link href="/checkout" onClick={closeCart} className={styles.checkoutButton}>
-                      Finalizar Compra...
-                    </Link>
-                  </div>
-                </>
+                <ul className={styles.itemList}>
+                  {cart.map((item) => (
+                    <li key={`${item.id}-${item.selectedSize}`} className={styles.item}>
+                      <div className={styles.itemInfo}>
+                        <h3 className={styles.itemName}>{item.name}</h3>
+                        <p className={styles.itemSize}>Talle: {item.selectedSize}</p>
+                        <p className={styles.itemPrice}>${item.price.toFixed(2)}</p>
+                      </div>
+                      <div className={styles.itemActions}>
+                        <button
+                          onClick={() => removeFromCart(item.id, item.selectedSize)}
+                          className={styles.quantityButton}
+                        >
+                          <Minus className={styles.icon} />
+                        </button>
+                        <span className={styles.quantity}>{item.quantity}</span>
+                        <button onClick={() => addToCart(item)} className={styles.quantityButton}>
+                          <Plus className={styles.icon} />
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               )}
+            </div>
+            <div className={styles.footer}>
+              <p className={styles.total}>Total: ${total.toFixed(2)}</p>
+              <Link href="/checkout" onClick={closeCart} className={styles.checkoutButton}>
+                Finalizar Orden
+              </Link>
             </div>
           </motion.div>
         </>

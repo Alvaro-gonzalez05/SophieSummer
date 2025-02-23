@@ -74,15 +74,17 @@
 }
 
 .submitButton {
+  position: relative;
+  width: 100%;
+  padding: 1rem;
   background-color: var(--color-primary);
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
   border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s;
-  position: relative;
   overflow: hidden;
 }
 
@@ -90,17 +92,39 @@
   background-color: var(--color-primary-dark);
 }
 
-.checkIcon {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.submitButton.success {
   background-color: #10b981;
 }
 
+.iconWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .icon {
+  width: 1.5rem;
+  height: 1.5rem;
   color: white;
+}
+
+.spinAnimation {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .backButton {

@@ -21,6 +21,20 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem("cart", JSON.stringify(cart))
   }, [cart])
 
+  useEffect(() => {
+    // Toggle body scroll when cart is opened/closed
+    if (isCartOpen) {
+      document.body.classList.add("no-scroll")
+    } else {
+      document.body.classList.remove("no-scroll")
+    }
+
+    // Cleanup function to remove class when component unmounts
+    return () => {
+      document.body.classList.remove("no-scroll")
+    }
+  }, [isCartOpen])
+
   const addToCart = (product) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.id === product.id && item.selectedSize === product.selectedSize)

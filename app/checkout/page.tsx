@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useCart } from "../cart-context"
 import { motion } from "framer-motion"
-import { Check, ArrowLeft } from "lucide-react"
+import { Check, Loader, ArrowLeft } from "lucide-react"
 import styles from "./checkout.module.css"
 
 export default function Checkout() {
@@ -17,6 +17,7 @@ export default function Checkout() {
     phone: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSuccess, setIsSuccess] = useState(false)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -38,8 +39,11 @@ export default function Checkout() {
       })
 
       if (response.ok) {
-        clearCart()
-        router.push("/order-confirmation")
+        setIsSuccess(true)
+        setTimeout(() => {
+          clearCart()
+          router.push("/order-confirmation")
+        }, 2000) // Espera 2 segundos antes de redirigir
       } else {
         throw new Error("Failed to send order email")
       }
@@ -56,11 +60,11 @@ export default function Checkout() {
   return (
     <main className={styles.main}>
       <BackButton />
-      <h1 className={styles.title}>Confirmar Orden</h1>
+      <h1 className={styles.title}>Checkout</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.formGroup}>
           <label htmlFor="name" className={styles.label}>
-            Nombre
+            Name
           </label>
           <input
             type="text"
@@ -74,7 +78,7 @@ export default function Checkout() {
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="email" className={styles.label}>
-            Mail
+            Email
           </label>
           <input
             type="email"
@@ -88,7 +92,7 @@ export default function Checkout() {
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="address" className={styles.label}>
-            Direccion
+            Address
           </label>
           <input
             type="text"
@@ -102,7 +106,7 @@ export default function Checkout() {
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="phone" className={styles.label}>
-            Numero de Telefono
+            Phone
           </label>
           <input
             type="tel"
@@ -115,7 +119,7 @@ export default function Checkout() {
           />
         </div>
         <div className={styles.orderSummary}>
-          <h2 className={styles.summaryTitle}>Detalle de orden</h2>
+          <h2 className={styles.summaryTitle}>Order Summary</h2>
           <ul className={styles.itemList}>
             {cart.map((item) => (
               <li key={`${item.id}-${item.selectedSize}`} className={styles.item}>
@@ -131,21 +135,30 @@ export default function Checkout() {
             <span>${total.toFixed(2)}</span>
           </div>
         </div>
-        <motion.button type="submit" className={styles.submitButton} whileTap={{ scale: 0.95 }} disabled={isSubmitting}>
+        <motion.button
+          type="submit"
+          className={`${styles.submitButton} ${isSuccess ? styles.success : ""}`}
+          whileTap={{ scale: 0.95 }}
+          disabled={isSubmitting || isSuccess}
+        >
           <motion.div
             initial={false}
-            animate={isSubmitting ? { scale: 1 } : { scale: 0 }}
+            animate={isSubmitting || isSuccess ? { scale: 1 } : { scale: 0 }}
             transition={{ duration: 0.3 }}
-            className={styles.checkIcon}
+            className={styles.iconWrapper}
           >
-            <Check className={styles.icon} />
+            {isSuccess ? (
+              <Check className={styles.icon} />
+            ) : (
+              <Loader className={`${styles.icon} ${styles.spinAnimation}`} />
+            )}
           </motion.div>
           <motion.span
             initial={false}
-            animate={isSubmitting ? { opacity: 0 } : { opacity: 1 }}
+            animate={isSubmitting || isSuccess ? { opacity: 0 } : { opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
-            Pasar a Finalizar Compra
+            {isSubmitting ? "Processing..." : isSuccess ? "Order Placed!" : "Place Order"}
           </motion.span>
         </motion.button>
       </form>
