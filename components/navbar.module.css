@@ -1,5 +1,5 @@
 .navbar {
-  background-color: white;
+  background-color: #e4e2dd;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   position: fixed;
   top: 0;
@@ -123,7 +123,7 @@
 
 .navLink:hover {
   color: #111827;
-  border-color: var(--color-primary);
+  border-color: black;
 }
 
 .mobileNavLink {

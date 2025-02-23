@@ -38,7 +38,7 @@ const CartModal = () => {
                 </button>
               </div>
               {cart.length === 0 ? (
-                <p>Your cart is empty.</p>
+                <p>Tu carrito esta vacio, añade un producto....</p>
               ) : (
                 <ul className={styles.itemList}>
                   {cart.map((item) => (

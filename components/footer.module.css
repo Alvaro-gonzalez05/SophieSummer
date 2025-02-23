@@ -1,6 +1,6 @@
 .footer {
-    background-color: var(--color-primary);
-    color: white;
+    background-color: #e4e2dd;
+    color: black;
     padding: 3rem 0;
   }
   
@@ -59,7 +59,7 @@
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
     transition: background-color 0.3s;
-    color: white;
+    color: black;
   }
   
   .socialLink:hover {

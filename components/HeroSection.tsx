@@ -1,7 +1,7 @@
 import React from "react";
 import "./HeroSection.css";
 import Image from "next/image";
-import heroImage from "./assets/logo.jpeg";
+import heroImage from "./assets/logo.png";
 
 const HeroSection = ({ scrollToProducts }) => {
   return (

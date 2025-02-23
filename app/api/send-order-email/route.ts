@@ -4,8 +4,8 @@ import nodemailer from "nodemailer"
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "alvarogonzalez7070@gmail.com",
-    pass: "pvcz objb ldvd cito",
+    user: "sophie.summer.shop@gmail.com",
+    pass: "izxp wbgm yfso osha",
   },
 })
 
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
 
   const adminMailOptions = {
     from: process.env.EMAIL_USER,
-    to: "alvarogonzalez7070@gmail.com",
+    to: "sophie.summer.shop@gmail.com",
     subject: "Nueva orden de Sophie Summer",
     html: `
       <h1>Nueva orden</h1>

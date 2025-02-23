@@ -48,10 +48,10 @@ const Navbar = () => {
                 </Link>
               </div>
               <div className={styles.desktopMenu}>
-                <NavLink href="/">Home</NavLink>
-                <NavLink href="/about">About Us</NavLink>
+                <NavLink href="/">Inicio</NavLink>
+                <NavLink href="/about">Sobre Nosotros</NavLink>
                 <NavLink href="#contact" onClick={handleContactClick}>
-                  Contact
+                  Contactanos
                 </NavLink>
               </div>
               <div className={styles.actions}>
@@ -83,10 +83,10 @@ const Navbar = () => {
               >
                 <div className={styles.mobileMenuContent}>
                   <MobileNavLink href="/" onClick={() => setIsOpen(false)}>
-                    Home
+                    Inicio
                   </MobileNavLink>
                   <MobileNavLink href="/about" onClick={() => setIsOpen(false)}>
-                    About Us
+                    Sobre Nosotros
                   </MobileNavLink>
                   <MobileNavLink
                     href="#contact"
@@ -95,7 +95,7 @@ const Navbar = () => {
                       setIsOpen(false)
                     }}
                   >
-                    Contact
+                    Contactanos
                   </MobileNavLink>
                 </div>
               </motion.div>
