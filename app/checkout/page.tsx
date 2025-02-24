@@ -1,11 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useCart } from "../cart-context"
 import { motion } from "framer-motion"
 import { Check, Loader, ArrowLeft } from "lucide-react"
+import Script from "next/script"
 import styles from "./checkout.module.css"
+
+declare global {
+  interface Window {
+    MercadoPago: any
+  }
+}
 
 export default function Checkout() {
   const { cart, clearCart } = useCart()
@@ -18,6 +25,7 @@ export default function Checkout() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
+  const [mercadoPagoPreferenceId, setMercadoPagoPreferenceId] = useState(null)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -69,10 +77,56 @@ export default function Checkout() {
     }
   }
 
+  const handleMercadoPagoPayment = async () => {
+    setIsSubmitting(true)
+    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+
+    try {
+      const response = await fetch("/api/create-preference", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ formData, cart, total }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to create Mercado Pago preference")
+      }
+
+      const { id } = await response.json()
+      setMercadoPagoPreferenceId(id)
+    } catch (error) {
+      console.error("Error creating Mercado Pago payment:", error)
+      alert("There was an error creating the payment. Please try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  useEffect(() => {
+    if (mercadoPagoPreferenceId) {
+      const mp = new window.MercadoPago(process.env.NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY, {
+        locale: "es-AR",
+      })
+
+      mp.checkout({
+        preference: {
+          id: mercadoPagoPreferenceId,
+        },
+        render: {
+          container: ".cho-container",
+          label: "Pagar con Mercado Pago",
+        },
+      })
+    }
+  }, [mercadoPagoPreferenceId])
+
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
   return (
     <main className={styles.main}>
+      <Script src="https://sdk.mercadopago.com/js/v2" />
       <BackButton />
       <h1 className={styles.title}>Checkout</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
@@ -149,32 +203,43 @@ export default function Checkout() {
             <span>${total.toFixed(2)}</span>
           </div>
         </div>
-        <motion.button
-          type="submit"
-          className={`${styles.submitButton} ${isSuccess ? styles.success : ""}`}
-          whileTap={{ scale: 0.95 }}
-          disabled={isSubmitting || isSuccess}
-        >
-          <motion.div
-            initial={false}
-            animate={isSubmitting || isSuccess ? { scale: 1 } : { scale: 0 }}
-            transition={{ duration: 0.3 }}
-            className={styles.iconWrapper}
+        <div className={styles.paymentOptions}>
+          <motion.button
+            type="submit"
+            className={`${styles.submitButton} ${isSuccess ? styles.success : ""}`}
+            whileTap={{ scale: 0.95 }}
+            disabled={isSubmitting || isSuccess}
           >
-            {isSuccess ? (
-              <Check className={styles.icon} />
-            ) : (
-              <Loader className={`${styles.icon} ${styles.spinAnimation}`} />
-            )}
-          </motion.div>
-          <motion.span
-            initial={false}
-            animate={isSubmitting || isSuccess ? { opacity: 0 } : { opacity: 1 }}
-            transition={{ duration: 0.3 }}
+            <motion.div
+              initial={false}
+              animate={isSubmitting || isSuccess ? { scale: 1 } : { scale: 0 }}
+              transition={{ duration: 0.3 }}
+              className={styles.iconWrapper}
+            >
+              {isSuccess ? (
+                <Check className={styles.icon} />
+              ) : (
+                <Loader className={`${styles.icon} ${styles.spinAnimation}`} />
+              )}
+            </motion.div>
+            <motion.span
+              initial={false}
+              animate={isSubmitting || isSuccess ? { opacity: 0 } : { opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {isSubmitting ? "Processing..." : isSuccess ? "Order Placed!" : "Place Order (Email)"}
+            </motion.span>
+          </motion.button>
+          <button
+            type="button"
+            onClick={handleMercadoPagoPayment}
+            className={styles.mercadoPagoButton}
+            disabled={isSubmitting}
           >
-            {isSubmitting ? "Processing..." : isSuccess ? "Order Placed!" : "Place Order"}
-          </motion.span>
-        </motion.button>
+            Pay with Mercado Pago
+          </button>
+          <div className="cho-container"></div>
+        </div>
       </form>
     </main>
   )

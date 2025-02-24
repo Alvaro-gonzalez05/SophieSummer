@@ -23,7 +23,7 @@
     ],
     "image": "./assets/producto2.jpg",
     "category": "bikinis",
-    "stock": 9
+    "stock": 6
   },
   {
     "id": 3,
@@ -73,7 +73,7 @@
     ],
     "image": "./assets/producto6.jpg",
     "category": "conjuntos",
-    "stock": 10
+    "stock": 9
   },
   {
     "id": 7,
