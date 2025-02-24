@@ -30,7 +30,8 @@ export default function Checkout() {
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
     try {
-      const response = await fetch("/api/send-order-email", {
+      // Send order email
+      const emailResponse = await fetch("/api/send-order-email", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,15 +39,28 @@ export default function Checkout() {
         body: JSON.stringify({ formData, cart, total }),
       })
 
-      if (response.ok) {
-        setIsSuccess(true)
-        setTimeout(() => {
-          clearCart()
-          router.push("/order-confirmation")
-        }, 2000) // Espera 2 segundos antes de redirigir
-      } else {
+      if (!emailResponse.ok) {
         throw new Error("Failed to send order email")
       }
+
+      // Update stock
+      const stockResponse = await fetch("/api/update-stock", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ updatedProducts: cart }),
+      })
+
+      if (!stockResponse.ok) {
+        throw new Error("Failed to update stock")
+      }
+
+      setIsSuccess(true)
+      setTimeout(() => {
+        clearCart()
+        router.push("/order-confirmation")
+      }, 2000)
     } catch (error) {
       console.error("Error submitting order:", error)
       alert("There was an error submitting your order. Please try again.")

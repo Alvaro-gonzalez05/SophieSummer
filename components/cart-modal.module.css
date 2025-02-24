@@ -140,3 +140,8 @@
   background-color: var(--color-primary-dark);
 }
 
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+

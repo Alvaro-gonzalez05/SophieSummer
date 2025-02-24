@@ -2,14 +2,35 @@
 
 import { useCart } from "../app/cart-context"
 import { X, Plus, Minus } from "lucide-react"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
+import { useState, useEffect } from "react"
 import styles from "./cart-modal.module.css"
 
 const CartModal = () => {
   const { cart, isCartOpen, closeCart, addToCart, removeFromCart } = useCart()
+  const router = useRouter()
+  const [isClosing, setIsClosing] = useState(false)
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const isCartEmpty = cart.length === 0
+
+  useEffect(() => {
+    if (isClosing) {
+      const timer = setTimeout(() => {
+        router.push("/checkout")
+        setIsClosing(false)
+      }, 300) // This should match the exit animation duration
+      return () => clearTimeout(timer)
+    }
+  }, [isClosing, router])
+
+  const handleCheckout = () => {
+    if (!isCartEmpty) {
+      setIsClosing(true)
+      closeCart()
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -32,20 +53,20 @@ const CartModal = () => {
           >
             <div className={styles.content}>
               <div className={styles.header}>
-                <h2 className={styles.title}>Tu carrito</h2>
+                <h2 className={styles.title}>Your Cart</h2>
                 <button onClick={closeCart} className={styles.closeButton}>
                   <X className={styles.closeIcon} />
                 </button>
               </div>
-              {cart.length === 0 ? (
-                <p>Tu carrito esta vacio, añade un producto....</p>
+              {isCartEmpty ? (
+                <p className={styles.emptyCartMessage}>Your cart is empty.</p>
               ) : (
                 <ul className={styles.itemList}>
                   {cart.map((item) => (
                     <li key={`${item.id}-${item.selectedSize}`} className={styles.item}>
                       <div className={styles.itemInfo}>
                         <h3 className={styles.itemName}>{item.name}</h3>
-                        <p className={styles.itemSize}>Talle: {item.selectedSize}</p>
+                        <p className={styles.itemSize}>Size: {item.selectedSize}</p>
                         <p className={styles.itemPrice}>${item.price.toFixed(2)}</p>
                       </div>
                       <div className={styles.itemActions}>
@@ -67,9 +88,13 @@ const CartModal = () => {
             </div>
             <div className={styles.footer}>
               <p className={styles.total}>Total: ${total.toFixed(2)}</p>
-              <Link href="/checkout" onClick={closeCart} className={styles.checkoutButton}>
-                Finalizar Orden
-              </Link>
+              <button
+                onClick={handleCheckout}
+                className={`${styles.checkoutButton} ${isCartEmpty ? styles.disabledButton : ""}`}
+                disabled={isCartEmpty}
+              >
+                {isCartEmpty ? "Carrito Vacío......." : "Finalizar orden"}
+              </button>
             </div>
           </motion.div>
         </>
