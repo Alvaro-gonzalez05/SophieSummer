@@ -15,7 +15,7 @@
   {
     "id": 2,
     "name": "Tropical Paradise Bikini",
-    "price": 10.00,
+    "price": 10,
     "sizes": [
       "90",
       "95",
@@ -23,7 +23,7 @@
     ],
     "image": "./assets/producto2.jpg",
     "category": "bikinis",
-    "stock": 3
+    "stock": 2
   },
   {
     "id": 3,

@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 export async function sendOrderEmail({ formData, cart, total }) {
   const adminMailOptions = {
     from: process.env.EMAIL_USER,
-    to: "alvarogonzalez7070@gmail.com",
+    to: "sophie.summer.shop@gmail.com",
     subject: "Nueva orden de Sophie Summer",
     html: `
       <h1>Nueva orden</h1>
