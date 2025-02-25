@@ -1,46 +1,56 @@
 import { NextResponse } from "next/server"
-import mercadopago from "mercadopago"
+import { sendOrderEmail } from "../send-order-email/route"
+import { updateStock } from "../update-stock/route"
 
 export async function POST(request: Request) {
   try {
     const body = await request.text()
-    const { action, data } = JSON.parse(body)
+    const data = JSON.parse(body)
 
-    if (action === "payment.created" || action === "payment.updated") {
-      const paymentId = data.id
-      const payment = await mercadopago.payment.findById(paymentId)
+    // Verify the payment status
+    if (data.type === "payment" && data.data.status === "approved") {
+      const paymentId = data.data.id
 
-      if (payment.body.status === "approved") {
-        const orderEmail = payment.body.external_reference
-        const orderItems = payment.body.additional_info.items
+      // Fetch payment details from Mercado Pago API
+      const paymentResponse = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+        headers: {
+          Authorization: `Bearer ${process.env.MERCADO_PAGO_ACCESS_TOKEN}`,
+        },
+      })
 
-        // Here you would typically update your database with the order information
-
-        // Send confirmation email
-        await fetch("/api/send-order-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            formData: { email: orderEmail },
-            cart: orderItems,
-            total: payment.body.transaction_amount,
-          }),
-        })
-
-        // Update stock
-        await fetch("/api/update-stock", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ updatedProducts: orderItems }),
-        })
+      if (!paymentResponse.ok) {
+        throw new Error("Failed to fetch payment details from Mercado Pago")
       }
+
+      const paymentData = await paymentResponse.json()
+
+      // Extract order details from the payment data
+      const formData = {
+        name: paymentData.payer.first_name + " " + paymentData.payer.last_name,
+        email: paymentData.payer.email,
+        address: paymentData.payer.address?.street_name || "N/A",
+        phone: paymentData.payer.phone?.number || "N/A",
+      }
+
+      const cart = paymentData.additional_info.items.map((item) => ({
+        name: item.title,
+        price: Number.parseFloat(item.unit_price),
+        quantity: Number.parseInt(item.quantity),
+        selectedSize: item.category_id, // Assuming you store the size in category_id
+      }))
+
+      const total = Number.parseFloat(paymentData.transaction_amount)
+
+      // Update stock
+      await updateStock({ updatedProducts: cart })
+
+      // Send order confirmation email
+      await sendOrderEmail({ formData, cart, total })
+
+      return NextResponse.json({ success: true })
     }
 
-    return NextResponse.json({ received: true })
+    return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error processing Mercado Pago webhook:", error)
     return NextResponse.json({ error: "Failed to process webhook" }, { status: 500 })

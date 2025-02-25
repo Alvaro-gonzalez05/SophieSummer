@@ -4,17 +4,15 @@ import nodemailer from "nodemailer"
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "sophie.summer.shop@gmail.com",
-    pass: "izxp wbgm yfso osha",
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 })
 
-export async function POST(request: Request) {
-  const { formData, cart, total } = await request.json()
-
+export async function sendOrderEmail({ formData, cart, total }) {
   const adminMailOptions = {
     from: process.env.EMAIL_USER,
-    to: "sophie.summer.shop@gmail.com",
+    to: "alvarogonzalez7070@gmail.com",
     subject: "Nueva orden de Sophie Summer",
     html: `
       <h1>Nueva orden</h1>
@@ -30,7 +28,9 @@ export async function POST(request: Request) {
           .map(
             (item: any) => `
           <li>
-            ${item.name} (Talla: ${item.selectedSize}) - Cantidad: ${item.quantity} - Precio: $${(item.price * item.quantity).toFixed(2)}
+            ${item.name} (Talla: ${item.selectedSize}) - Cantidad: ${item.quantity} - Precio: $${(
+              item.price * item.quantity
+            ).toFixed(2)}
           </li>
         `,
           )
@@ -54,7 +54,9 @@ export async function POST(request: Request) {
           .map(
             (item: any) => `
           <li>
-            ${item.name} (Talla: ${item.selectedSize}) - Cantidad: ${item.quantity} - Precio: $${(item.price * item.quantity).toFixed(2)}
+            ${item.name} (Talla: ${item.selectedSize}) - Cantidad: ${item.quantity} - Precio: $${(
+              item.price * item.quantity
+            ).toFixed(2)}
           </li>
         `,
           )
@@ -67,11 +69,14 @@ export async function POST(request: Request) {
     `,
   }
 
+  await transporter.sendMail(adminMailOptions)
+  await transporter.sendMail(customerMailOptions)
+}
+
+export async function POST(request: Request) {
   try {
-    console.log("Attempting to send emails...")
-    await transporter.sendMail(adminMailOptions)
-    await transporter.sendMail(customerMailOptions)
-    console.log("Emails sent successfully")
+    const { formData, cart, total } = await request.json()
+    await sendOrderEmail({ formData, cart, total })
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error sending emails", error)

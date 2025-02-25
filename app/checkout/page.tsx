@@ -38,19 +38,6 @@ export default function Checkout() {
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
     try {
-      // Send order email
-      const emailResponse = await fetch("/api/send-order-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ formData, cart, total }),
-      })
-
-      if (!emailResponse.ok) {
-        throw new Error("Failed to send order email")
-      }
-
       // Update stock
       const stockResponse = await fetch("/api/update-stock", {
         method: "POST",
@@ -62,6 +49,19 @@ export default function Checkout() {
 
       if (!stockResponse.ok) {
         throw new Error("Failed to update stock")
+      }
+
+      // Send order email
+      const emailResponse = await fetch("/api/send-order-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ formData, cart, total }),
+      })
+
+      if (!emailResponse.ok) {
+        throw new Error("Failed to send order email")
       }
 
       setIsSuccess(true)
@@ -118,6 +118,7 @@ export default function Checkout() {
           container: ".cho-container",
           label: "Pagar con Mercado Pago",
         },
+        autoOpen: true, // This will open the Mercado Pago checkout automatically
       })
     }
   }, [mercadoPagoPreferenceId])
