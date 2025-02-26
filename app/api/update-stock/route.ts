@@ -8,7 +8,6 @@ export async function updateStock({ updatedProducts }) {
     const productIndex = products.findIndex((p) => p.id === updatedProduct.id)
     if (productIndex !== -1) {
       products[productIndex].stock = Math.max(0, products[productIndex].stock - updatedProduct.quantity)
-      products[productIndex].inStock = products[productIndex].stock > 0
     }
   }
 
