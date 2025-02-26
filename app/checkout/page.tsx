@@ -26,6 +26,7 @@ export default function Checkout() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [mercadoPagoPreferenceId, setMercadoPagoPreferenceId] = useState(null)
+  const [stockError, setStockError] = useState(null)
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -34,10 +35,32 @@ export default function Checkout() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setStockError(null)
 
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
     try {
+      // Check stock availability
+      const stockCheckResponse = await fetch("/api/check-stock", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cart }),
+      })
+
+      if (!stockCheckResponse.ok) {
+        const errorData = await stockCheckResponse.json()
+        throw new Error(errorData.error || "Failed to check stock")
+      }
+
+      const stockData = await stockCheckResponse.json()
+      if (!stockData.inStock) {
+        setStockError("Some items in your cart are no longer available. Please review your cart.")
+        setIsSubmitting(false)
+        return
+      }
+
       // Update stock
       const stockResponse = await fetch("/api/update-stock", {
         method: "POST",
@@ -79,9 +102,31 @@ export default function Checkout() {
 
   const handleMercadoPagoPayment = async () => {
     setIsSubmitting(true)
+    setStockError(null)
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
     try {
+      // Check stock availability
+      const stockCheckResponse = await fetch("/api/check-stock", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cart }),
+      })
+
+      if (!stockCheckResponse.ok) {
+        const errorData = await stockCheckResponse.json()
+        throw new Error(errorData.error || "Failed to check stock")
+      }
+
+      const stockData = await stockCheckResponse.json()
+      if (!stockData.inStock) {
+        setStockError("Some items in your cart are no longer available. Please review your cart.")
+        setIsSubmitting(false)
+        return
+      }
+
       const response = await fetch("/api/create-preference", {
         method: "POST",
         headers: {
@@ -118,7 +163,7 @@ export default function Checkout() {
           container: ".cho-container",
           label: "Pagar con Mercado Pago",
         },
-        autoOpen: true, // This will open the Mercado Pago checkout automatically
+        autoOpen: true,
       })
     }
   }, [mercadoPagoPreferenceId])
@@ -131,6 +176,7 @@ export default function Checkout() {
       <BackButton />
       <h1 className={styles.title}>Checkout</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
+        {/* Form fields */}
         <div className={styles.formGroup}>
           <label htmlFor="name" className={styles.label}>
             Name
@@ -204,6 +250,7 @@ export default function Checkout() {
             <span>${total.toFixed(2)}</span>
           </div>
         </div>
+        {stockError && <p className={styles.error}>{stockError}</p>}
         <div className={styles.paymentOptions}>
           <motion.button
             type="submit"

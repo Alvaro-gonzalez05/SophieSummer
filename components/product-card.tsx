@@ -1,26 +1,28 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { Check } from "lucide-react";
-import styles from "./product-card.module.css";
+import { useState } from "react"
+import Image from "next/image"
+import { motion } from "framer-motion"
+import { Check } from "lucide-react"
+import styles from "./product-card.module.css"
 
 const ProductCard = ({ product, addToCart }) => {
-  const [selectedSize, setSelectedSize] = useState(null);
-  const [isAdding, setIsAdding] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(null)
+  const [isAdding, setIsAdding] = useState(false)
 
   const handleAddToCart = () => {
-    if (selectedSize) {
-      setIsAdding(true);
-      addToCart({ ...product, selectedSize });
+    if (selectedSize && product.stock > 0) {
+      setIsAdding(true)
+      addToCart({ ...product, selectedSize })
       setTimeout(() => {
-        setIsAdding(false);
-      }, 1000);
+        setIsAdding(false)
+      }, 1000)
+    } else if (!selectedSize) {
+      alert("Please select a size")
     } else {
-      alert("Please select a size");
+      alert("Sorry, this product is out of stock")
     }
-  };
+  }
 
   return (
     <motion.div
@@ -54,9 +56,9 @@ const ProductCard = ({ product, addToCart }) => {
             </button>
           ))}
         </div>
-        <motion.button 
-          onClick={handleAddToCart} 
-          className={styles.addButton} 
+        <motion.button
+          onClick={handleAddToCart}
+          className={styles.addButton}
           whileTap={{ scale: 0.95 }}
           disabled={product.stock === 0}
         >
@@ -78,7 +80,8 @@ const ProductCard = ({ product, addToCart }) => {
         </motion.button>
       </div>
     </motion.div>
-  );
-};
+  )
+}
 
-export default ProductCard;
+export default ProductCard
+
