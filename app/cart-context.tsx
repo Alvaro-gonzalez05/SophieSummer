@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, useCallback } from "react"
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react"
 
 const CartContext = createContext(null)
 
@@ -9,45 +9,25 @@ export const CartProvider = ({ children }) => {
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [products, setProducts] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    // Load cart from localStorage when the component mounts
-    const savedCart = localStorage.getItem("cart")
-    if (savedCart) {
-      setCart(JSON.parse(savedCart))
-    }
-
-    // Initial fetch of products
-    fetchProducts()
-  }, [])
-
-  useEffect(() => {
-    // Save cart to localStorage whenever it changes
-    localStorage.setItem("cart", JSON.stringify(cart))
-  }, [cart])
-
-  useEffect(() => {
-    // Toggle body scroll when cart is opened/closed
-    if (isCartOpen) {
-      document.body.classList.add("no-scroll")
-    } else {
-      document.body.classList.remove("no-scroll")
-    }
-
-    // Cleanup function to remove class when component unmounts
-    return () => {
-      document.body.classList.remove("no-scroll")
-    }
-  }, [isCartOpen])
+  const lastFetchTime = useRef(0)
+  const isFetching = useRef(false)
 
   const fetchProducts = useCallback(async () => {
+    const now = Date.now()
+    if (isFetching.current || now - lastFetchTime.current < 1000) {
+      return
+    }
+
     try {
+      isFetching.current = true
       setIsLoading(true)
       const timestamp = new Date().getTime()
       const response = await fetch(`/api/get-products?t=${timestamp}`, {
         cache: "no-store",
         headers: {
-          "Cache-Control": "no-cache",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       })
 
@@ -57,16 +37,55 @@ export const CartProvider = ({ children }) => {
 
       const data = await response.json()
       setProducts(data)
+      lastFetchTime.current = now
+
+      // Verificar si hay productos en el carrito que ya no tienen stock
+      setCart((prevCart) => {
+        const updatedCart = prevCart.filter((cartItem) => {
+          const product = data.find((p) => p.id === cartItem.id)
+          return product && product.stock >= cartItem.quantity
+        })
+
+        if (updatedCart.length !== prevCart.length) {
+          alert("Algunos productos en tu carrito ya no están disponibles y han sido removidos.")
+        }
+
+        return updatedCart
+      })
     } catch (error) {
       console.error("Error fetching products:", error)
     } finally {
       setIsLoading(false)
+      isFetching.current = false
     }
   }, [])
 
+  useEffect(() => {
+    const savedCart = localStorage.getItem("cart")
+    if (savedCart) {
+      setCart(JSON.parse(savedCart))
+    }
+    fetchProducts()
+  }, [fetchProducts])
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart))
+  }, [cart])
+
+  useEffect(() => {
+    if (isCartOpen) {
+      document.body.classList.add("no-scroll")
+    } else {
+      document.body.classList.remove("no-scroll")
+    }
+
+    return () => {
+      document.body.classList.remove("no-scroll")
+    }
+  }, [isCartOpen])
+
   const addToCart = useCallback(
     (product) => {
-      // Verificar el stock antes de agregar al carrito
       const currentProduct = products.find((p) => p.id === product.id)
       if (!currentProduct || currentProduct.stock <= 0) {
         alert("Lo sentimos, este producto está agotado")
@@ -78,7 +97,6 @@ export const CartProvider = ({ children }) => {
           (item) => item.id === product.id && item.selectedSize === product.selectedSize,
         )
 
-        // Verificar que la cantidad total no exceda el stock disponible
         const currentQuantity = existingItem ? existingItem.quantity : 0
         if (currentQuantity + 1 > currentProduct.stock) {
           alert("No hay suficiente stock disponible")
@@ -122,9 +140,6 @@ export const CartProvider = ({ children }) => {
     return cart.reduce((total, item) => total + item.quantity, 0)
   }, [cart])
 
-  const openCart = () => setIsCartOpen(true)
-  const closeCart = () => setIsCartOpen(false)
-
   return (
     <CartContext.Provider
       value={{
@@ -134,8 +149,8 @@ export const CartProvider = ({ children }) => {
         clearCart,
         getTotalItems,
         isCartOpen,
-        openCart,
-        closeCart,
+        openCart: () => setIsCartOpen(true),
+        closeCart: () => setIsCartOpen(false),
         products,
         fetchProducts,
         isLoading,

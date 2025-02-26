@@ -1,7 +1,19 @@
 import { NextResponse } from "next/server"
 import { getProducts, uploadProducts } from "../../../lib/blob-store"
 
+// Implementar sistema de bloqueo simple
+let isUpdating = false
+const updateQueue: any[] = []
+
 export async function updateStock({ updatedProducts }) {
+  if (isUpdating) {
+    // Si hay una actualización en proceso, agregar a la cola
+    return new Promise((resolve, reject) => {
+      updateQueue.push({ updatedProducts, resolve, reject })
+    })
+  }
+
+  isUpdating = true
   console.log("Starting stock update for products:", JSON.stringify(updatedProducts))
 
   try {
@@ -59,14 +71,27 @@ export async function updateStock({ updatedProducts }) {
     if (stockUpdated) {
       await uploadProducts(currentProducts)
       console.log("Stock updated successfully in Vercel Blob Store")
-    } else {
-      console.log("No stock updates were needed")
     }
 
-    return { success: true }
+    const result = { success: true }
+
+    // Procesar la cola de actualizaciones
+    while (updateQueue.length > 0) {
+      const nextUpdate = updateQueue.shift()
+      try {
+        await updateStock(nextUpdate.updatedProducts)
+        nextUpdate.resolve({ success: true })
+      } catch (error) {
+        nextUpdate.reject(error)
+      }
+    }
+
+    return result
   } catch (error) {
     console.error("Error updating stock:", error)
     throw error
+  } finally {
+    isUpdating = false
   }
 }
 
@@ -76,11 +101,20 @@ export async function POST(request: Request) {
     console.log("Received request to update stock for products:", JSON.stringify(updatedProducts))
 
     const result = await updateStock({ updatedProducts })
+
+    // Forzar revalidación de la caché
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/revalidate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ path: "/" }),
+    })
+
     return NextResponse.json(result)
   } catch (error) {
     console.error("Error in stock update API route:", error)
 
-    // Si el error tiene un formato específico (de nuestra validación)
     let errorMessage = "Failed to update stock"
     let errorDetails = error.message
     let status = 500
