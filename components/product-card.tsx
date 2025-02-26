@@ -2,21 +2,28 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import { motion } from "framer-motion"
-import { Check, AlertCircle } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Check, AlertCircle, AlertTriangle } from "lucide-react"
 import styles from "./product-card.module.css"
 
 const ProductCard = ({ product, addToCart }) => {
   const [selectedSize, setSelectedSize] = useState(null)
   const [isAdding, setIsAdding] = useState(false)
-  const [isOutOfStock, setIsOutOfStock] = useState(product.stock <= 0)
+  const [stockStatus, setStockStatus] = useState({
+    isOutOfStock: false,
+    isLowStock: false,
+  })
 
   useEffect(() => {
-    setIsOutOfStock(product.stock <= 0)
+    // Actualizar el estado del stock cuando cambia el producto
+    setStockStatus({
+      isOutOfStock: product.stock <= 0,
+      isLowStock: product.stock > 0 && product.stock <= 3,
+    })
   }, [product.stock])
 
   const handleAddToCart = () => {
-    if (selectedSize && !isOutOfStock) {
+    if (selectedSize && !stockStatus.isOutOfStock) {
       setIsAdding(true)
       addToCart({ ...product, selectedSize })
       setTimeout(() => {
@@ -38,10 +45,16 @@ const ProductCard = ({ product, addToCart }) => {
       className={styles.card}
     >
       <div className={styles.imageContainer}>
-        {isOutOfStock && (
+        {stockStatus.isOutOfStock && (
           <div className={styles.outOfStock}>
             <AlertCircle size={16} className={styles.outOfStockIcon} />
             <span>Sin stock</span>
+          </div>
+        )}
+        {stockStatus.isLowStock && !stockStatus.isOutOfStock && (
+          <div className={`${styles.outOfStock} ${styles.lowStock}`}>
+            <AlertTriangle size={16} className={styles.lowStockIcon} />
+            <span>¡Últimas unidades!</span>
           </div>
         )}
         <Image
@@ -49,7 +62,7 @@ const ProductCard = ({ product, addToCart }) => {
           alt={product.name}
           width={300}
           height={300}
-          className={`${styles.image} ${isOutOfStock ? styles.imageOutOfStock : ""}`}
+          className={`${styles.image} ${stockStatus.isOutOfStock ? styles.imageOutOfStock : ""}`}
         />
       </div>
       <div className={styles.content}>
@@ -61,7 +74,7 @@ const ProductCard = ({ product, addToCart }) => {
               key={size}
               onClick={() => setSelectedSize(size)}
               className={`${styles.sizeButton} ${selectedSize === size ? styles.selectedSize : ""}`}
-              disabled={isOutOfStock}
+              disabled={stockStatus.isOutOfStock}
             >
               {size}
             </button>
@@ -69,29 +82,36 @@ const ProductCard = ({ product, addToCart }) => {
         </div>
         <motion.button
           onClick={handleAddToCart}
-          className={`${styles.addButton} ${isOutOfStock ? styles.disabledButton : ""}`}
-          whileTap={{ scale: isOutOfStock ? 1 : 0.95 }}
-          disabled={isOutOfStock}
+          className={`${styles.addButton} ${stockStatus.isOutOfStock ? styles.disabledButton : ""}`}
+          whileTap={{ scale: stockStatus.isOutOfStock ? 1 : 0.95 }}
+          disabled={stockStatus.isOutOfStock}
         >
-          <motion.div
-            initial={false}
-            animate={isAdding ? { scale: 1 } : { scale: 0 }}
-            transition={{ duration: 0.3 }}
-            className={styles.checkIcon}
-          >
-            <Check className={styles.icon} />
-          </motion.div>
-          <motion.span
-            initial={false}
-            animate={isAdding ? { opacity: 0 } : { opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            {isOutOfStock ? "Agotado" : "Añadir al Carrito"}
-          </motion.span>
+          <AnimatePresence>
+            {isAdding ? (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0 }}
+                className={styles.checkIcon}
+              >
+                <Check className={styles.icon} />
+              </motion.div>
+            ) : (
+              <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                {stockStatus.isOutOfStock ? "Agotado" : "Añadir al Carrito"}
+              </motion.span>
+            )}
+          </AnimatePresence>
         </motion.button>
-        <p className={`${styles.stockInfo} ${isOutOfStock ? styles.outOfStockText : styles.inStockText}`}>
-          {isOutOfStock ? "Sin stock disponible" : `Stock disponible: ${product.stock}`}
-        </p>
+        <div className={`${styles.stockInfo} ${stockStatus.isOutOfStock ? styles.outOfStockText : styles.inStockText}`}>
+          {stockStatus.isOutOfStock ? (
+            "Sin stock disponible"
+          ) : stockStatus.isLowStock ? (
+            <span className={styles.lowStockText}>¡Solo quedan {product.stock} unidades!</span>
+          ) : (
+            `Stock disponible: ${product.stock}`
+          )}
+        </div>
       </div>
     </motion.div>
   )

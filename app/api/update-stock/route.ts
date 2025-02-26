@@ -5,29 +5,59 @@ export async function updateStock({ updatedProducts }) {
   console.log("Starting stock update for products:", JSON.stringify(updatedProducts))
 
   try {
-    const products = await getProducts()
-    console.log("Current products in store:", JSON.stringify(products))
+    // Obtener productos actuales
+    const currentProducts = await getProducts()
+    console.log("Current products in store:", JSON.stringify(currentProducts))
 
     let stockUpdated = false
+    const errors = []
 
+    // Actualizar el stock para cada producto
     for (const updatedProduct of updatedProducts) {
-      const productIndex = products.findIndex((p) => p.id === updatedProduct.id)
+      const productIndex = currentProducts.findIndex((p) => p.id === updatedProduct.id)
 
       if (productIndex !== -1) {
-        const currentStock = products[productIndex].stock || 0
-        const newStock = Math.max(0, currentStock - updatedProduct.quantity)
+        const currentStock = currentProducts[productIndex].stock || 0
 
+        // Verificar que haya suficiente stock
+        if (currentStock < updatedProduct.quantity) {
+          errors.push({
+            productId: updatedProduct.id,
+            name: currentProducts[productIndex].name,
+            requested: updatedProduct.quantity,
+            available: currentStock,
+          })
+          continue
+        }
+
+        // Actualizar el stock
+        const newStock = Math.max(0, currentStock - updatedProduct.quantity)
         console.log(`Updating product ${updatedProduct.id} stock: ${currentStock} -> ${newStock}`)
 
-        products[productIndex].stock = newStock
+        currentProducts[productIndex].stock = newStock
         stockUpdated = true
       } else {
         console.warn(`Product with ID ${updatedProduct.id} not found in database`)
+        errors.push({
+          productId: updatedProduct.id,
+          error: "Product not found",
+        })
       }
     }
 
+    // Si hay errores, lanzar una excepción
+    if (errors.length > 0) {
+      throw new Error(
+        JSON.stringify({
+          message: "Some products could not be updated",
+          errors,
+        }),
+      )
+    }
+
+    // Guardar los cambios solo si se actualizó algún stock
     if (stockUpdated) {
-      await uploadProducts(products)
+      await uploadProducts(currentProducts)
       console.log("Stock updated successfully in Vercel Blob Store")
     } else {
       console.log("No stock updates were needed")
@@ -49,9 +79,30 @@ export async function POST(request: Request) {
     return NextResponse.json(result)
   } catch (error) {
     console.error("Error in stock update API route:", error)
+
+    // Si el error tiene un formato específico (de nuestra validación)
+    let errorMessage = "Failed to update stock"
+    let errorDetails = error.message
+    let status = 500
+
+    try {
+      const parsedError = JSON.parse(error.message)
+      if (parsedError.message && parsedError.errors) {
+        errorMessage = parsedError.message
+        errorDetails = parsedError.errors
+        status = 400
+      }
+    } catch (e) {
+      // Si no se puede parsear el error, usar el mensaje original
+    }
+
     return NextResponse.json(
-      { success: false, error: "Failed to update stock", details: error.message },
-      { status: 500 },
+      {
+        success: false,
+        error: errorMessage,
+        details: errorDetails,
+      },
+      { status },
     )
   }
 }
