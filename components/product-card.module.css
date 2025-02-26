@@ -117,7 +117,7 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgb(255, 255, 255);
   padding: 0.5rem 0.75rem;
   border-radius: 0.375rem;
   display: flex;
@@ -129,17 +129,11 @@
 }
 
 .outOfStock.lowStock {
-  background-color: #fff7ed;
-  color: #c2410c;
+  background-color: #ffffff;
+  color: #000000;
 }
 
-.outOfStockIcon {
-  color: #ef4444;
-}
 
-.lowStockIcon {
-  color: #f97316;
-}
 
 .imageOutOfStock {
   opacity: 0.7;

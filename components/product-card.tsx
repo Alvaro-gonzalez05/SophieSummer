@@ -47,13 +47,11 @@ const ProductCard = ({ product, addToCart }) => {
       <div className={styles.imageContainer}>
         {stockStatus.isOutOfStock && (
           <div className={styles.outOfStock}>
-            <AlertCircle size={16} className={styles.outOfStockIcon} />
             <span>Sin stock</span>
           </div>
         )}
         {stockStatus.isLowStock && !stockStatus.isOutOfStock && (
           <div className={`${styles.outOfStock} ${styles.lowStock}`}>
-            <AlertTriangle size={16} className={styles.lowStockIcon} />
             <span>¡Últimas unidades!</span>
           </div>
         )}
@@ -103,15 +101,6 @@ const ProductCard = ({ product, addToCart }) => {
             )}
           </AnimatePresence>
         </motion.button>
-        <div className={`${styles.stockInfo} ${stockStatus.isOutOfStock ? styles.outOfStockText : styles.inStockText}`}>
-          {stockStatus.isOutOfStock ? (
-            "Sin stock disponible"
-          ) : stockStatus.isLowStock ? (
-            <span className={styles.lowStockText}>¡Solo quedan {product.stock} unidades!</span>
-          ) : (
-            `Stock disponible: ${product.stock}`
-          )}
-        </div>
       </div>
     </motion.div>
   )
