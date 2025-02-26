@@ -4,8 +4,8 @@ import nodemailer from "nodemailer"
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: "sophie.summer.shop@gmail.com",
+    pass: "cqkq dlzs fktq ebsa",
   },
 })
 
@@ -14,7 +14,7 @@ export async function sendOrderEmail({ formData, cart, total }) {
     console.log("Preparing to send emails...")
 
     const adminMailOptions = {
-      from: process.env.EMAIL_USER,
+      from: "sophie.summer.shop@gmail.com",
       to: "sophie.summer.shop@gmail.com",
       subject: "Nueva orden de Sophie Summer",
       html: `
@@ -44,7 +44,7 @@ export async function sendOrderEmail({ formData, cart, total }) {
     }
 
     const customerMailOptions = {
-      from: process.env.EMAIL_USER,
+      from: "sophie.summer.shop@gmail.com",
       to: formData.email,
       subject: "Confirmación de tu orden - Sophie Summer",
       html: `
