@@ -95,14 +95,56 @@
 }
 
 /* Estilos para el cartel de "Sin stock" */
+.imageContainer {
+  position: relative;
+  overflow: hidden;
+}
+
 .outOfStock {
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: rgba(255, 255, 255, 0.8);
-  color: rgb(0, 0, 0);
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #ef4444;
   font-size: 0.75rem;
   font-weight: bold;
   padding: 5px 8px;
   border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
 }
+
+.outOfStockIcon {
+  color: #ef4444;
+}
+
+.imageOutOfStock {
+  opacity: 0.7;
+  filter: grayscale(40%);
+}
+
+.stockInfo {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.outOfStockText {
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.inStockText {
+  color: #10b981;
+}
+
+.disabledButton {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}
+
+.disabledButton:hover {
+  background-color: #d1d5db;
+}
+

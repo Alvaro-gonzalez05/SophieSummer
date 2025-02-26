@@ -61,19 +61,6 @@ export default function Checkout() {
         return
       }
 
-      // Update stock
-      const stockResponse = await fetch("/api/update-stock", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ updatedProducts: cart }),
-      })
-
-      if (!stockResponse.ok) {
-        throw new Error("Failed to update stock")
-      }
-
       // Send order email
       const emailResponse = await fetch("/api/send-order-email", {
         method: "POST",
@@ -85,6 +72,19 @@ export default function Checkout() {
 
       if (!emailResponse.ok) {
         throw new Error("Failed to send order email")
+      }
+
+      // Update stock AFTER email confirmation
+      const stockResponse = await fetch("/api/update-stock", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ updatedProducts: cart }),
+      })
+
+      if (!stockResponse.ok) {
+        throw new Error("Failed to update stock")
       }
 
       setIsSuccess(true)
