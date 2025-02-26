@@ -7,7 +7,9 @@ export async function updateStock({ updatedProducts }) {
   for (const updatedProduct of updatedProducts) {
     const productIndex = products.findIndex((p) => p.id === updatedProduct.id)
     if (productIndex !== -1) {
+      // Ensure we're subtracting the quantity purchased
       products[productIndex].stock = Math.max(0, products[productIndex].stock - updatedProduct.quantity)
+      console.log(`Updated stock for product ${updatedProduct.id}: ${products[productIndex].stock}`)
     }
   }
 
@@ -18,6 +20,7 @@ export async function updateStock({ updatedProducts }) {
 export async function POST(request: Request) {
   try {
     const { updatedProducts } = await request.json()
+    console.log("Received update request for products:", updatedProducts)
     await updateStock({ updatedProducts })
     return NextResponse.json({ success: true })
   } catch (error) {
