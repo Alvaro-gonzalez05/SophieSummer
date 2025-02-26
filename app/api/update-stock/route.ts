@@ -1,22 +1,19 @@
 import { NextResponse } from "next/server"
-import fs from "fs/promises"
-import path from "path"
+import { getProducts, uploadProducts } from "../../../lib/blob-store"
 
 export async function updateStock({ updatedProducts }) {
-  const filePath = path.join(process.cwd(), "public", "products.json")
-  const fileContents = await fs.readFile(filePath, "utf8")
-  const products = JSON.parse(fileContents)
+  const products = await getProducts()
 
-  // Update the stock for each product
-  updatedProducts.forEach((updatedProduct: any) => {
-    const productIndex = products.findIndex((p: any) => p.id === updatedProduct.id)
+  for (const updatedProduct of updatedProducts) {
+    const productIndex = products.findIndex((p) => p.id === updatedProduct.id)
     if (productIndex !== -1) {
-      products[productIndex].stock -= updatedProduct.quantity
+      products[productIndex].stock = Math.max(0, products[productIndex].stock - updatedProduct.quantity)
+      products[productIndex].inStock = products[productIndex].stock > 0
     }
-  })
+  }
 
-  // Write the updated products back to the file
-  await fs.writeFile(filePath, JSON.stringify(products, null, 2))
+  await uploadProducts(products)
+  console.log("Stock updated in Vercel Blob Store")
 }
 
 export async function POST(request: Request) {
