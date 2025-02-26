@@ -15,21 +15,30 @@ const ProductRefresher = () => {
   }, [fetchProducts])
 
   useEffect(() => {
-    // Refresh immediately on mount
+    // Refresh inmediato al montar
     refreshProducts()
 
-    // Set up interval for periodic refreshes
-    const intervalId = setInterval(refreshProducts, 5000) // Refresh every 5 seconds
+    // Configurar intervalo para refrescos periódicos
+    const intervalId = setInterval(refreshProducts, 3000) // Cada 3 segundos
 
-    // Refresh on window focus
-    const handleFocus = () => {
-      refreshProducts()
+    // Refrescar en eventos específicos
+    const events = ["visibilitychange", "focus", "pageshow"]
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        refreshProducts()
+      }
     }
-    window.addEventListener("focus", handleFocus)
 
+    events.forEach((event) => {
+      window.addEventListener(event, handleVisibilityChange)
+    })
+
+    // Cleanup
     return () => {
       clearInterval(intervalId)
-      window.removeEventListener("focus", handleFocus)
+      events.forEach((event) => {
+        window.removeEventListener(event, handleVisibilityChange)
+      })
     }
   }, [refreshProducts])
 

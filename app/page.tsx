@@ -6,10 +6,16 @@ import styles from "./page.module.css"
 import ClientSideScrollHandler from "../components/ClientSideScrollHandler"
 import ProductRefresher from "../components/ProductRefresher"
 
+// Función para obtener productos con timestamp para evitar caché
 async function getProducts() {
-  // Add cache busting parameter to ensure we get fresh data
   const timestamp = new Date().getTime()
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/get-products?t=${timestamp}`, { cache: "no-store" })
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/get-products?t=${timestamp}`, {
+    cache: "no-store",
+    headers: {
+      "Cache-Control": "no-store, must-revalidate",
+      Pragma: "no-cache",
+    },
+  })
 
   if (!res.ok) {
     console.error("Failed to fetch products:", res.status, res.statusText)
@@ -18,6 +24,10 @@ async function getProducts() {
 
   return res.json()
 }
+
+// Marcar la página como dinámica
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export default async function Home() {
   const products = await getProducts()
@@ -42,7 +52,11 @@ export default async function Home() {
         <div id="products-section">
           <Suspense fallback={<div>Loading...</div>}>
             {categories.map((category) => (
-              <CategorySection key={category} title={category} initialProducts={productsByCategory[category]} />
+              <CategorySection
+                key={`${category}-${Date.now()}`} // Forzar re-render con timestamp
+                title={category}
+                initialProducts={productsByCategory[category]}
+              />
             ))}
           </Suspense>
         </div>
