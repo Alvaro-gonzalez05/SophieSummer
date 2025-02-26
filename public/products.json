@@ -52,7 +52,7 @@
   {
     "id": 5,
     "name": "Elegant Evening Ensemble",
-    "price": 129.99,
+    "price": 10,
     "sizes": [
       "90",
       "95",
@@ -65,7 +65,7 @@
   {
     "id": 6,
     "name": "Casual Chic Set",
-    "price": 99.99,
+    "price": 10,
     "sizes": [
       "90",
       "95",
