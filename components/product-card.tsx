@@ -1,20 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { Check, AlertCircle } from "lucide-react"
 import styles from "./product-card.module.css"
-import { useCart } from "../app/cart-context"
 
-const ProductCard = ({ product: initialProduct }) => {
+const ProductCard = ({ product, addToCart }) => {
   const [selectedSize, setSelectedSize] = useState(null)
   const [isAdding, setIsAdding] = useState(false)
-  const { addToCart, products } = useCart()
+  const [isOutOfStock, setIsOutOfStock] = useState(product.stock <= 0)
 
-  // Find the latest product data from the context
-  const product = products.find((p) => p.id === initialProduct.id) || initialProduct
-  const isOutOfStock = product.stock <= 0
+  useEffect(() => {
+    setIsOutOfStock(product.stock <= 0)
+  }, [product.stock])
 
   const handleAddToCart = () => {
     if (selectedSize && !isOutOfStock) {
@@ -32,6 +31,7 @@ const ProductCard = ({ product: initialProduct }) => {
 
   return (
     <motion.div
+      key={`${product.id}-${product.stock}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}

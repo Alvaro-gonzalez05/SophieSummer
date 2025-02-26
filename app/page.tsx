@@ -42,7 +42,7 @@ export default async function Home() {
         <div id="products-section">
           <Suspense fallback={<div>Loading...</div>}>
             {categories.map((category) => (
-              <CategorySection key={category} title={category} products={productsByCategory[category]} />
+              <CategorySection key={category} title={category} initialProducts={productsByCategory[category]} />
             ))}
           </Suspense>
         </div>
