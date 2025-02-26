@@ -1,10 +1,9 @@
-"use client";
-
-import { useState, useEffect, useRef, Suspense } from "react";
-import Carousel from "../components/carousel";
-import CategorySection from "../components/category-section";
-import HeroSection from "../components/HeroSection";
-import styles from "./page.module.css";
+import { Suspense } from "react"
+import Carousel from "../components/carousel"
+import CategorySection from "../components/category-section"
+import HeroSection from "../components/HeroSection"
+import styles from "./page.module.css"
+import ClientSideScrollHandler from "../components/ClientSideScrollHandler"
 
 async function getProducts() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/get-products`, { cache: "no-store" })
@@ -23,18 +22,13 @@ export default async function Home() {
     return acc
   }, {})
 
-  const scrollToProducts = () => {
-    if (productsRef.current) {
-      productsRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
     <div>
-      <HeroSection scrollToProducts={scrollToProducts} />
+      <ClientSideScrollHandler />
+      <HeroSection />
       <Carousel />
       <main className={styles.main}>
-        <div ref={productsRef}>
+        <div id="products-section">
           <Suspense fallback={<div>Loading...</div>}>
             {categories.map((category) => (
               <CategorySection key={category} title={category} products={productsByCategory[category]} />
@@ -43,5 +37,6 @@ export default async function Home() {
         </div>
       </main>
     </div>
-  );
+  )
 }
+
