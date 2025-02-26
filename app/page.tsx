@@ -34,14 +34,7 @@ export default async function Home() {
   return (
     <div>
       <ClientSideScrollHandler />
-      <HeroSection
-        scrollToProducts={() => {
-          const productsSection = document.getElementById("products-section")
-          if (productsSection) {
-            productsSection.scrollIntoView({ behavior: "smooth" })
-          }
-        }}
-      />
+      <HeroSection />
       <Carousel />
       <main className={styles.main}>
         <div id="products-section">
