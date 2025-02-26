@@ -34,7 +34,7 @@
     ],
     "image": "./assets/producto3.jpg",
     "category": "ropa interior",
-    "stock": 10
+    "stock": 1
   },
   {
     "id": 4,
@@ -47,7 +47,7 @@
     ],
     "image": "./assets/producto4.jpg",
     "category": "ropa interior",
-    "stock": 10
+    "stock": 1
   },
   {
     "id": 5,
