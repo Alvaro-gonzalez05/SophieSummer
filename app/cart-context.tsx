@@ -7,6 +7,7 @@ const CartContext = createContext(null)
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([])
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const [products, setProducts] = useState([])
 
   useEffect(() => {
     // Load cart from localStorage when the component mounts
@@ -14,6 +15,9 @@ export const CartProvider = ({ children }) => {
     if (savedCart) {
       setCart(JSON.parse(savedCart))
     }
+
+    // Initial fetch of products
+    fetchProducts()
   }, [])
 
   useEffect(() => {
@@ -34,6 +38,20 @@ export const CartProvider = ({ children }) => {
       document.body.classList.remove("no-scroll")
     }
   }, [isCartOpen])
+
+  const fetchProducts = async () => {
+    try {
+      const timestamp = new Date().getTime()
+      const response = await fetch(`/api/get-products?t=${timestamp}`, { cache: "no-store" })
+      if (!response.ok) {
+        throw new Error("Failed to fetch products")
+      }
+      const data = await response.json()
+      setProducts(data)
+    } catch (error) {
+      console.error("Error fetching products:", error)
+    }
+  }
 
   const addToCart = (product) => {
     setCart((prevCart) => {
@@ -87,6 +105,8 @@ export const CartProvider = ({ children }) => {
         isCartOpen,
         openCart,
         closeCart,
+        products,
+        fetchProducts,
       }}
     >
       {children}

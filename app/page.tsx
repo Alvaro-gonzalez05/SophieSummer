@@ -4,6 +4,7 @@ import CategorySection from "../components/category-section"
 import HeroSection from "../components/HeroSection"
 import styles from "./page.module.css"
 import ClientSideScrollHandler from "../components/ClientSideScrollHandler"
+import ProductRefresher from "../components/ProductRefresher"
 
 async function getProducts() {
   // Add cache busting parameter to ensure we get fresh data
@@ -36,6 +37,7 @@ export default async function Home() {
       <ClientSideScrollHandler />
       <HeroSection />
       <Carousel />
+      <ProductRefresher />
       <main className={styles.main}>
         <div id="products-section">
           <Suspense fallback={<div>Loading...</div>}>

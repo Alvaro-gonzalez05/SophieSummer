@@ -15,7 +15,7 @@ declare global {
 }
 
 export default function Checkout() {
-  const { cart, clearCart } = useCart()
+  const { cart, clearCart, fetchProducts } = useCart()
   const router = useRouter()
   const [formData, setFormData] = useState({
     name: "",
@@ -90,6 +90,7 @@ export default function Checkout() {
       setIsSuccess(true)
       setTimeout(() => {
         clearCart()
+        fetchProducts() // Refresh product data
         router.push("/order-confirmation")
       }, 2000)
     } catch (error) {

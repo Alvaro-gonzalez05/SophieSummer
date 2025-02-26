@@ -5,10 +5,15 @@ import Image from "next/image"
 import { motion } from "framer-motion"
 import { Check, AlertCircle } from "lucide-react"
 import styles from "./product-card.module.css"
+import { useCart } from "../app/cart-context"
 
-const ProductCard = ({ product, addToCart }) => {
+const ProductCard = ({ product: initialProduct }) => {
   const [selectedSize, setSelectedSize] = useState(null)
   const [isAdding, setIsAdding] = useState(false)
+  const { addToCart, products } = useCart()
+
+  // Find the latest product data from the context
+  const product = products.find((p) => p.id === initialProduct.id) || initialProduct
   const isOutOfStock = product.stock <= 0
 
   const handleAddToCart = () => {
