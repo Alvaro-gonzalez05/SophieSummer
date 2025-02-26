@@ -21,11 +21,16 @@ export default async function Home() {
     acc[category] = products.filter((product) => product.category === category)
     return acc
   }, {})
+const scrollToProducts = () => {
+    if (products.current) {
+      products.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <div>
       <ClientSideScrollHandler />
-      <HeroSection />
+      <HeroSection scrollToProducts={scrollToProducts} />
       <Carousel />
       <main className={styles.main}>
         <div id="products-section">

@@ -22,7 +22,11 @@ export async function GET() {
       products = await getProducts()
     }
 
-    // We don't need to modify the products here anymore, as we're using the actual stock count
+    // Ensure that the stock information is included in the response
+    products = products.map((product) => ({
+      ...product,
+      stock: product.stock || 0, // Ensure stock is always a number
+    }))
 
     return NextResponse.json(products)
   } catch (error) {

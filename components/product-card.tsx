@@ -18,9 +18,9 @@ const ProductCard = ({ product, addToCart }) => {
         setIsAdding(false)
       }, 1000)
     } else if (!selectedSize) {
-      alert("Please select a size")
+      alert("Por favor, selecciona una talla")
     } else {
-      alert("Sorry, this product is out of stock")
+      alert("Lo sentimos, este producto está agotado")
     }
   }
 
@@ -78,6 +78,7 @@ const ProductCard = ({ product, addToCart }) => {
             {product.stock === 0 ? "Agotado" : "Añadir al Carrito"}
           </motion.span>
         </motion.button>
+        <p className={styles.stockInfo}>{product.stock > 0 ? `Stock disponible: ${product.stock}` : "Sin stock"}</p>
       </div>
     </motion.div>
   )
