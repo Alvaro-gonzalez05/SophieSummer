@@ -10,7 +10,7 @@
     ],
     "image": "./assets/producto1.jpg",
     "category": "bikinis",
-    "stock": 0
+    "stock": 1
   },
   {
     "id": 2,
