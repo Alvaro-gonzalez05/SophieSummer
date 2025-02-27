@@ -16,7 +16,7 @@ const images = [
 
 export default function CustomCarousel() {
   return (
-    <Slide direction="down"><div className={styles.carouselContainer}>
+    <Slide direction="up"><div className={styles.carouselContainer}>
       <Carousel
         showArrows={true}
         autoPlay={true}
