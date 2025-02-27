@@ -1,10 +1,5 @@
 import { NextResponse } from "next/server"
 
-// Logging para debug
-console.log("MERCADO_PAGO_ACCESS_TOKEN:", process.env.MERCADO_PAGO_ACCESS_TOKEN)
-console.log("NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY:", process.env.NEXT_PUBLIC_MERCADO_PAGO_PUBLIC_KEY)
-console.log("NEXT_PUBLIC_BASE_URL:", process.env.NEXT_PUBLIC_BASE_URL)
-
 export async function POST(request: Request) {
   try {
     console.log("Received request")
@@ -12,9 +7,12 @@ export async function POST(request: Request) {
     console.log("Parsed request data:", { formData, cart, total })
 
     const items = cart.map((item: any) => ({
-      title: `${item.name} (${item.selectedSize})`,
+      id: item.id.toString(), // Importante: Incluir el ID del producto
+      title: `${item.name} - Talla: ${item.selectedSize}`,
       unit_price: Number(item.price),
       quantity: Number(item.quantity),
+      currency_id: "ARS",
+      description: `${item.name} - Talla ${item.selectedSize}`,
     }))
     console.log("Mapped items:", items)
 
@@ -23,6 +21,12 @@ export async function POST(request: Request) {
       payer: {
         name: formData.name,
         email: formData.email,
+        phone: {
+          number: formData.phone,
+        },
+        address: {
+          street_name: formData.address,
+        },
       },
       back_urls: {
         success: `${process.env.NEXT_PUBLIC_BASE_URL}/order-confirmation`,
@@ -31,6 +35,12 @@ export async function POST(request: Request) {
       auto_return: "approved",
       external_reference: formData.email,
       notification_url: `${process.env.NEXT_PUBLIC_BASE_URL}/api/mercadopago-webhook`,
+      metadata: {
+        buyer_name: formData.name,
+        buyer_email: formData.email,
+        buyer_address: formData.address,
+        buyer_phone: formData.phone,
+      },
     }
     console.log("Created preference:", preference)
 
@@ -45,6 +55,8 @@ export async function POST(request: Request) {
     })
 
     if (!response.ok) {
+      const errorData = await response.json()
+      console.error("Mercado Pago error:", errorData)
       throw new Error(`HTTP error! status: ${response.status}`)
     }
 

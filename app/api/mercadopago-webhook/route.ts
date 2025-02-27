@@ -42,31 +42,24 @@ export async function POST(request: Request) {
 
         // Procesar los items del carrito
         if (paymentData.additional_info && paymentData.additional_info.items) {
-          const cart = paymentData.additional_info.items.map((item) => ({
-            id: extractProductId(item.id || item.title), // Intentar usar el ID primero
-            name: item.title,
-            price: Number(item.unit_price),
-            quantity: Number(item.quantity),
-            selectedSize: extractSize(item.title),
-          }))
+          const cart = paymentData.additional_info.items.map((item) => {
+            // Extraer ID y tamaño del título
+            const titleParts = item.title.split(" - ")
+            const sizeMatch = titleParts[1]?.match(/Talla: (.+)/) || ["", "U"]
+
+            return {
+              id: Number(item.id), // Usar el ID directamente del item
+              name: titleParts[0],
+              price: Number(item.unit_price),
+              quantity: Number(item.quantity),
+              selectedSize: sizeMatch[1],
+            }
+          })
 
           const total = Number(paymentData.transaction_amount)
 
-          // Primero verificar el stock
           try {
-            const stockCheckResponse = await fetch("/api/check-stock", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ cart }),
-            })
-
-            if (!stockCheckResponse.ok) {
-              throw new Error("Stock check failed")
-            }
-
-            // Si el stock está OK, actualizar stock
+            // Actualizar stock directamente
             console.log("Updating stock for items:", JSON.stringify(cart))
             await updateStock({ updatedProducts: cart })
             console.log("Stock updated successfully")
@@ -92,50 +85,14 @@ export async function POST(request: Request) {
       }
     }
 
-    // Siempre retornar 200 para Mercado Pago
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error processing Mercado Pago webhook:", error)
-    // Mercado Pago espera un 200 incluso en caso de error
     return NextResponse.json({
       success: false,
       error: "Failed to process webhook",
       details: error.message,
     })
   }
-}
-
-// Función mejorada para extraer ID del producto
-function extractProductId(text: string): number {
-  // Primero intentar extraer un ID numérico directo
-  if (!isNaN(Number(text))) {
-    return Number(text)
-  }
-
-  // Luego buscar un número en el texto
-  const match = text.match(/(\d+)/)
-  if (match) {
-    return Number(match[1])
-  }
-
-  // Si no se encuentra un ID, retornar 0 o lanzar un error
-  console.error(`Could not extract product ID from: ${text}`)
-  return 0
-}
-
-// Función mejorada para extraer talla
-function extractSize(title: string): string {
-  // Buscar un patrón común para tallas
-  const sizePatterns = [/talla[:\s]+([^\s)]+)/i, /size[:\s]+([^\s)]+)/i, /$$([^$$]+)\)/, /\[([^\]]+)\]/]
-
-  for (const pattern of sizePatterns) {
-    const match = title.match(pattern)
-    if (match && match[1]) {
-      return match[1].trim()
-    }
-  }
-
-  // Si no se encuentra la talla, retornar "U" o un valor por defecto
-  return "U"
 }
 

@@ -1,38 +1,26 @@
 import { NextResponse } from "next/server"
 import { getProducts, uploadProducts } from "../../../lib/blob-store"
 
-// Implementar sistema de bloqueo simple
-let isUpdating = false
-const updateQueue: any[] = []
-
 export async function updateStock({ updatedProducts }) {
-  if (isUpdating) {
-    // Si hay una actualización en proceso, agregar a la cola
-    return new Promise((resolve, reject) => {
-      updateQueue.push({ updatedProducts, resolve, reject })
-    })
-  }
-
-  isUpdating = true
   console.log("Starting stock update for products:", JSON.stringify(updatedProducts))
 
   try {
-    // Obtener productos actuales
     const currentProducts = await getProducts()
     console.log("Current products in store:", JSON.stringify(currentProducts))
 
     let stockUpdated = false
     const errors = []
 
-    // Actualizar el stock para cada producto
     for (const updatedProduct of updatedProducts) {
       const productIndex = currentProducts.findIndex((p) => p.id === updatedProduct.id)
 
       if (productIndex !== -1) {
         const currentStock = currentProducts[productIndex].stock || 0
 
-        // Verificar que haya suficiente stock
         if (currentStock < updatedProduct.quantity) {
+          console.warn(
+            `Not enough stock for product ${updatedProduct.id}: requested ${updatedProduct.quantity}, available ${currentStock}`,
+          )
           errors.push({
             productId: updatedProduct.id,
             name: currentProducts[productIndex].name,
@@ -42,7 +30,6 @@ export async function updateStock({ updatedProducts }) {
           continue
         }
 
-        // Actualizar el stock
         const newStock = Math.max(0, currentStock - updatedProduct.quantity)
         console.log(`Updating product ${updatedProduct.id} stock: ${currentStock} -> ${newStock}`)
 
@@ -57,8 +44,8 @@ export async function updateStock({ updatedProducts }) {
       }
     }
 
-    // Si hay errores, lanzar una excepción
     if (errors.length > 0) {
+      console.error("Stock update errors:", errors)
       throw new Error(
         JSON.stringify({
           message: "Some products could not be updated",
@@ -67,31 +54,17 @@ export async function updateStock({ updatedProducts }) {
       )
     }
 
-    // Guardar los cambios solo si se actualizó algún stock
     if (stockUpdated) {
       await uploadProducts(currentProducts)
       console.log("Stock updated successfully in Vercel Blob Store")
+    } else {
+      console.log("No stock updates were needed")
     }
 
-    const result = { success: true }
-
-    // Procesar la cola de actualizaciones
-    while (updateQueue.length > 0) {
-      const nextUpdate = updateQueue.shift()
-      try {
-        await updateStock(nextUpdate.updatedProducts)
-        nextUpdate.resolve({ success: true })
-      } catch (error) {
-        nextUpdate.reject(error)
-      }
-    }
-
-    return result
+    return { success: true }
   } catch (error) {
     console.error("Error updating stock:", error)
     throw error
-  } finally {
-    isUpdating = false
   }
 }
 
@@ -101,16 +74,6 @@ export async function POST(request: Request) {
     console.log("Received request to update stock for products:", JSON.stringify(updatedProducts))
 
     const result = await updateStock({ updatedProducts })
-
-    // Forzar revalidación de la caché
-    await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/revalidate`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ path: "/" }),
-    })
-
     return NextResponse.json(result)
   } catch (error) {
     console.error("Error in stock update API route:", error)
