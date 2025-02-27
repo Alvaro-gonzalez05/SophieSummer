@@ -28,11 +28,11 @@ export async function POST(request: Request) {
       const paymentData = await paymentResponse.json()
       console.log("Payment data:", JSON.stringify(paymentData))
 
-      // Only process approved payments
+      // Solo procesar pagos aprobados
       if (paymentData.status === "approved") {
         console.log("Payment approved, processing order")
 
-        // Extract order details from the payment data
+        // Extraer detalles del comprador
         const formData = {
           name: paymentData.payer.first_name + " " + paymentData.payer.last_name,
           email: paymentData.payer.email,
@@ -40,34 +40,49 @@ export async function POST(request: Request) {
           phone: paymentData.payer.phone?.number || "N/A",
         }
 
-        // Make sure additional_info and items exist
+        // Procesar los items del carrito
         if (paymentData.additional_info && paymentData.additional_info.items) {
           const cart = paymentData.additional_info.items.map((item) => ({
-            id: extractProductId(item.title), // Add a function to extract product ID from title
+            id: extractProductId(item.id || item.title), // Intentar usar el ID primero
             name: item.title,
-            price: Number.parseFloat(item.unit_price),
-            quantity: Number.parseInt(item.quantity),
-            selectedSize: extractSize(item.title), // Add a function to extract size from title
+            price: Number(item.unit_price),
+            quantity: Number(item.quantity),
+            selectedSize: extractSize(item.title),
           }))
 
-          const total = Number.parseFloat(paymentData.transaction_amount)
+          const total = Number(paymentData.transaction_amount)
 
-          // Update stock
+          // Primero verificar el stock
           try {
+            const stockCheckResponse = await fetch("/api/check-stock", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ cart }),
+            })
+
+            if (!stockCheckResponse.ok) {
+              throw new Error("Stock check failed")
+            }
+
+            // Si el stock está OK, actualizar stock
             console.log("Updating stock for items:", JSON.stringify(cart))
             await updateStock({ updatedProducts: cart })
             console.log("Stock updated successfully")
-          } catch (stockError) {
-            console.error("Error updating stock:", stockError)
-          }
 
-          // Send order confirmation email
-          try {
-            console.log("Sending order confirmation email")
+            // Enviar emails de confirmación
+            console.log("Sending order confirmation emails")
             await sendOrderEmail({ formData, cart, total })
-            console.log("Email sent successfully")
-          } catch (emailError) {
-            console.error("Error sending email:", emailError)
+            console.log("Confirmation emails sent successfully")
+          } catch (error) {
+            console.error("Error processing order:", error)
+            // Aún retornamos 200 para Mercado Pago, pero logueamos el error
+            return NextResponse.json({
+              success: false,
+              error: "Error processing order",
+              details: error.message,
+            })
           }
         } else {
           console.error("Missing additional_info or items in payment data")
@@ -77,26 +92,50 @@ export async function POST(request: Request) {
       }
     }
 
+    // Siempre retornar 200 para Mercado Pago
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Error processing Mercado Pago webhook:", error)
-    return NextResponse.json({ error: "Failed to process webhook" }, { status: 500 })
+    // Mercado Pago espera un 200 incluso en caso de error
+    return NextResponse.json({
+      success: false,
+      error: "Failed to process webhook",
+      details: error.message,
+    })
   }
 }
 
-// Helper function to extract product ID from title
-function extractProductId(title: string): number {
-  // This is a placeholder. You'll need to implement this based on how your product titles are formatted
-  // For example, if your title format is "Product Name (Size) #123", you might extract the ID with regex
-  const match = title.match(/#(\d+)/)
-  return match ? Number.parseInt(match[1]) : 0
+// Función mejorada para extraer ID del producto
+function extractProductId(text: string): number {
+  // Primero intentar extraer un ID numérico directo
+  if (!isNaN(Number(text))) {
+    return Number(text)
+  }
+
+  // Luego buscar un número en el texto
+  const match = text.match(/(\d+)/)
+  if (match) {
+    return Number(match[1])
+  }
+
+  // Si no se encuentra un ID, retornar 0 o lanzar un error
+  console.error(`Could not extract product ID from: ${text}`)
+  return 0
 }
 
-// Helper function to extract size from title
+// Función mejorada para extraer talla
 function extractSize(title: string): string {
-  // This is a placeholder. You'll need to implement this based on how your product titles are formatted
-  // For example, if your title format is "Product Name (Size)", you might extract the size with regex
-  const match = title.match(/$$([^)]+)$$/)
-  return match ? match[1] : "N/A"
+  // Buscar un patrón común para tallas
+  const sizePatterns = [/talla[:\s]+([^\s)]+)/i, /size[:\s]+([^\s)]+)/i, /$$([^$$]+)\)/, /\[([^\]]+)\]/]
+
+  for (const pattern of sizePatterns) {
+    const match = title.match(pattern)
+    if (match && match[1]) {
+      return match[1].trim()
+    }
+  }
+
+  // Si no se encuentra la talla, retornar "U" o un valor por defecto
+  return "U"
 }
 
