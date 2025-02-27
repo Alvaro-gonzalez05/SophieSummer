@@ -14,16 +14,16 @@ const HeroSection = () => {
 
   return (
     <div className="hero-container">
-      <Slide direction="left" cascade><div className="hero-text">
-        <h1>¡Bienvenida a Sophie Summer!</h1>
-        <p>
+      <div className="hero-text">
+        <Slide direction="left"><h1>¡Bienvenida a Sophie Summer!</h1></Slide>
+        <Slide direction="left"><p>
           Sumérgete en el verano con nuestra colección de bikinis y ropa interior que te hará sentir increíble. Descubre
           lo último en moda veraniega.
-        </p>
+        </p></Slide>
         <button onClick={scrollToProducts} className="hero-button">
           Ver Productos →
         </button>
-      </div></Slide>
+      </div>
       <div className="hero-image">
       <Slide direction="right"><Image src={heroImage || "/placeholder.svg"} className="imagen" alt="Banner" /></Slide>
       </div>
