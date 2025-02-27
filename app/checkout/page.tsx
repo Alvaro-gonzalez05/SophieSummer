@@ -310,7 +310,7 @@ export default function Checkout() {
               animate={isSubmitting || isSuccess ? { opacity: 0 } : { opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              {isSubmitting ? "Processing..." : isSuccess ? "Order Placed!" : "Cordinar pago con vendedor (10%OFF *TRANFERENCIA)"}
+              {isSubmitting ? "Processing..." : isSuccess ? "Order Placed!" : "Cordinar pago con vendedor (10%OFF *TRANSFERENCIA)"}
             </motion.span>
           </motion.button>
           <button

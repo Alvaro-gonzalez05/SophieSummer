@@ -2,90 +2,116 @@
   {
     "id": 1,
     "name": "Summer Breeze Bikini",
-    "price": 10,
+    "price": 38500,
     "sizes": [
       "90",
       "95",
       "100"
     ],
-    "image": "./assets/producto1.jpg",
-    "category": "bikinis",
+    "image": "./assets/conjuntoverde.jpeg",
+    "category": "conjuntos",
     "stock": 1
   },
   {
     "id": 2,
     "name": "Tropical Paradise Bikini",
-    "price": 100,
+    "price": 25000,
     "sizes": [
       "90",
       "95",
       "100"
     ],
-    "image": "./assets/producto2.jpg",
-    "category": "bikinis",
+    "image": "./assets/conjunto2.jpeg",
+    "category": "conjuntos",
     "stock": 1
   },
   {
     "id": 3,
     "name": "Lace Dream Lingerie Set",
-    "price": 69.99,
+    "price": 25000,
     "sizes": [
       "T.U"
     ],
-    "image": "./assets/producto3.jpg",
-    "category": "ropa interior",
+    "image": "./assets/conjunto3.jpeg",
+    "category": "conjuntos",
     "stock": 1
   },
   {
     "id": 4,
     "name": "Silk Touch Underwear",
-    "price": 7.00,
+    "price": 20000,
     "sizes": [
       "90",
       "95",
       "100"
     ],
-    "image": "./assets/producto4.jpg",
+    "image": "./assets/ropainterior1.jpeg",
     "category": "ropa interior",
     "stock": 1
   },
   {
     "id": 5,
     "name": "Elegant Evening Ensemble",
-    "price": 10,
+    "price": 20000,
     "sizes": [
       "90",
       "95",
       "100"
     ],
-    "image": "./assets/producto5.jpg",
-    "category": "conjuntos",
-    "stock": 10
+    "image": "./assets/ropainterior2.jpeg",
+    "category": "ropa interior",
+    "stock": 1
   },
   {
     "id": 6,
     "name": "Casual Chic Set",
-    "price": 10,
+    "price": 20000,
     "sizes": [
       "90",
       "95",
       "100"
     ],
-    "image": "./assets/producto6.jpg",
-    "category": "bikinis",
-    "stock": 9
+    "image": "./assets/ropainterior3.jpeg",
+    "category": "ropa interior",
+    "stock": 2
   },
   {
     "id": 7,
     "name": "Tropical Paradise Bikini",
-    "price": 89.99,
+    "price": 38500,
     "sizes": [
       "90",
       "95",
       "100"
     ],
-    "image": "./assets/producto6.jpg",
+    "image": "./assets/bikini1.jpeg",
     "category": "bikinis",
-    "stock": 10
+    "stock": 1
+  },
+  {
+    "id": 8,
+    "name": "Tropical Paradise Bikini",
+    "price": 38500,
+    "sizes": [
+      "90",
+      "95",
+      "100"
+    ],
+    "image": "./assets/bikini2.jpeg",
+    "category": "bikinis",
+    "stock": 1
+  },
+  {
+    "id": 9,
+    "name": "Tropical Paradise Bikini",
+    "price": 38500,
+    "sizes": [
+      "90",
+      "95",
+      "100"
+    ],
+    "image": "./assets/bikini3.jpeg",
+    "category": "bikinis",
+    "stock": 1
   }
 ]
