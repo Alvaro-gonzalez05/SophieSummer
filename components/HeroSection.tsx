@@ -24,9 +24,9 @@ const HeroSection = () => {
           Ver Productos →
         </button>
       </div></Slide>
-      <Slide direction="right" cascade><div className="hero-image">
-        <Image src={heroImage || "/placeholder.svg"} className="imagen" alt="Banner" />
-      </div></Slide>
+      <div className="hero-image">
+      <Slide direction="right"><Image src={heroImage || "/placeholder.svg"} className="imagen" alt="Banner" /></Slide>
+      </div>
     </div>
   )
 }
