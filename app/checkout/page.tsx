@@ -61,21 +61,7 @@ export default function Checkout() {
         return
       }
 
-      // Update stock first
-      const stockResponse = await fetch("/api/update-stock", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ updatedProducts: cart }),
-      })
-
-      if (!stockResponse.ok) {
-        throw new Error("Failed to update stock")
-      }
-
-      
-
+      // Send order email
       const emailResponse = await fetch("/api/send-order-email", {
         method: "POST",
         headers: {
@@ -86,6 +72,19 @@ export default function Checkout() {
 
       if (!emailResponse.ok) {
         throw new Error("Failed to send order email")
+      }
+
+      // Update stock AFTER email confirmation
+      const stockResponse = await fetch("/api/update-stock", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ updatedProducts: cart }),
+      })
+
+      if (!stockResponse.ok) {
+        throw new Error("Failed to update stock")
       }
 
       setIsSuccess(true)
@@ -129,7 +128,21 @@ export default function Checkout() {
         return
       }
 
-      // Actualizamos el stock primero
+      // Enviamos los emails
+      console.log("Sending order emails...")
+      const emailResponse = await fetch("/api/send-order-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ formData, cart, total }),
+      })
+
+      if (!emailResponse.ok) {
+        throw new Error("Failed to send order email")
+      }
+
+      // Actualizamos el stock
       console.log("Updating stock...")
       const stockResponse = await fetch("/api/update-stock", {
         method: "POST",
@@ -141,22 +154,6 @@ export default function Checkout() {
 
       if (!stockResponse.ok) {
         throw new Error("Failed to update stock")
-      }
-
-      // Enviamos los emails (con delay de 3 minutos)
-      console.log("Sending order emails...")
-      alert("Tu orden ha sido procesada. Los correos de confirmación se enviarán en aproximadamente 3 minutos.")
-
-      const emailResponse = await fetch("/api/send-order-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ formData, cart, total }),
-      })
-
-      if (!emailResponse.ok) {
-        throw new Error("Failed to send order email")
       }
 
       // Si todo salió bien, creamos la preferencia de Mercado Pago
