@@ -5,6 +5,7 @@ import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { Check, AlertCircle, AlertTriangle } from "lucide-react"
 import styles from "./product-card.module.css"
+import { Fade } from "react-awesome-reveal"
 
 const ProductCard = ({ product, addToCart }) => {
   const [selectedSize, setSelectedSize] = useState(null)
@@ -37,7 +38,7 @@ const ProductCard = ({ product, addToCart }) => {
   }
 
   return (
-    <motion.div
+    <Fade cascade><motion.div
       key={`${product.id}-${product.stock}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -102,7 +103,7 @@ const ProductCard = ({ product, addToCart }) => {
           </AnimatePresence>
         </motion.button>
       </div>
-    </motion.div>
+    </motion.div></Fade>
   )
 }
 
