@@ -32,11 +32,11 @@ const Footer = () => {
           <div className={styles.section}>
             <h3 className={styles.sectionTitle}>Seguinos</h3>
             <div className={styles.socialLinks}>
-              <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+              <Link href="https://www.facebook.com/profile.php?id=61573412318762" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
                 <Facebook className={styles.icon} />
               </Link>
               <Link
-                href="https://instagram.com"
+                href="https://www.instagram.com/sophiesummerr_/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.socialLink}
@@ -48,7 +48,7 @@ const Footer = () => {
         </div>
         <div className={styles.bottom}>
           <p>&copy; 2025 Sophie Summer. Todos los derechos reservadoss</p>
-          <p>CODEA DESAROLLOS (ALVARO GONZALEZ)</p>
+          <p>CODEA DESAROLLOS</p>
         </div>
       </div>
     </footer>
