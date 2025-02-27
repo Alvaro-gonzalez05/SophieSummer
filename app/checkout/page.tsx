@@ -107,7 +107,7 @@ export default function Checkout() {
     const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
     try {
-      // Check stock availability
+      // Primero verificamos el stock
       const stockCheckResponse = await fetch("/api/check-stock", {
         method: "POST",
         headers: {
@@ -128,6 +128,36 @@ export default function Checkout() {
         return
       }
 
+      // Enviamos los emails
+      console.log("Sending order emails...")
+      const emailResponse = await fetch("/api/send-order-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ formData, cart, total }),
+      })
+
+      if (!emailResponse.ok) {
+        throw new Error("Failed to send order email")
+      }
+
+      // Actualizamos el stock
+      console.log("Updating stock...")
+      const stockResponse = await fetch("/api/update-stock", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ updatedProducts: cart }),
+      })
+
+      if (!stockResponse.ok) {
+        throw new Error("Failed to update stock")
+      }
+
+      // Si todo salió bien, creamos la preferencia de Mercado Pago
+      console.log("Creating Mercado Pago preference...")
       const response = await fetch("/api/create-preference", {
         method: "POST",
         headers: {
@@ -142,8 +172,12 @@ export default function Checkout() {
 
       const { id } = await response.json()
       setMercadoPagoPreferenceId(id)
+
+      // Limpiamos el carrito y actualizamos los productos
+      clearCart()
+      fetchProducts()
     } catch (error) {
-      console.error("Error creating Mercado Pago payment:", error)
+      console.error("Error processing payment:", error)
       alert("There was an error creating the payment. Please try again.")
     } finally {
       setIsSubmitting(false)
@@ -285,7 +319,7 @@ export default function Checkout() {
             className={styles.mercadoPagoButton}
             disabled={isSubmitting}
           >
-            Pay with Mercado Pago
+            {isSubmitting ? "Processing..." : "Pay with Mercado Pago"}
           </button>
           <div className="cho-container"></div>
         </div>
