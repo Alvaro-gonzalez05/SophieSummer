@@ -6,6 +6,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import styles from "./carousel.module.css";
 import Banner1 from "./assets/Banner1.jpg";
 import Banner2 from "./assets/Banner2.jpg";
+import {Slide} from "react-awesome-reveal"
 
 const images = [
   { src: Banner1, alt: "Summer Collection" },
@@ -15,7 +16,7 @@ const images = [
 
 export default function CustomCarousel() {
   return (
-    <div className={styles.carouselContainer}>
+    <Slide direction="down"><div className={styles.carouselContainer}>
       <Carousel
         showArrows={true}
         autoPlay={true}
@@ -37,6 +38,6 @@ export default function CustomCarousel() {
           </div>
         ))}
       </Carousel>
-    </div>
+    </div></Slide>
   );
 }
