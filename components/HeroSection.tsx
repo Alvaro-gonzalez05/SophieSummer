@@ -20,9 +20,9 @@ const HeroSection = () => {
           Sumérgete en el verano con nuestra colección de bikinis y ropa interior que te hará sentir increíble. Descubre
           lo último en moda veraniega.
         </p></Slide>
-        <button onClick={scrollToProducts} className="hero-button">
+        <Slide direction="left"><button onClick={scrollToProducts} className="hero-button">
           Ver Productos →
-        </button>
+        </button></Slide>
       </div>
       <div className="hero-image">
       <Slide direction="right"><Image src={heroImage || "/placeholder.svg"} className="imagen" alt="Banner" /></Slide>
