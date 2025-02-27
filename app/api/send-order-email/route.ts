@@ -55,7 +55,7 @@ export async function sendOrderEmail({ formData, cart, total }) {
     subject: "Confirmación de tu orden - Sophie Summer",
     html: `
       <h1>¡Gracias por tu compra!</h1>
-      <p>Tu orden fue confirmada. En breve uno de nuestros vendedores se contactará contigo para terminar de confirmar la orden y coordinar el pago.</p>
+      <p>Tu orden fue confirmada. En breve uno de nuestros vendedores se contactará contigo para terminar de confirmar la orden, coordinar el pago (si correcponde) y coordinar el envio.</p>
       
       <h2>Resumen de tu pedido:</h2>
       <ul>
@@ -74,6 +74,7 @@ export async function sendOrderEmail({ formData, cart, total }) {
       <p><strong>Total: $${total.toFixed(2)}</strong></p>
       
       <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+      <p>2616977056</p>
       <p>¡Gracias por elegir Sophie Summer!</p>
     `,
   }

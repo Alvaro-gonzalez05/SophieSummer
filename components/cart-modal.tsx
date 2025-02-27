@@ -53,13 +53,13 @@ const CartModal = () => {
           >
             <div className={styles.content}>
               <div className={styles.header}>
-                <h2 className={styles.title}>Your Cart</h2>
+                <h2 className={styles.title}>TU CARRITO</h2>
                 <button onClick={closeCart} className={styles.closeButton}>
                   <X className={styles.closeIcon} />
                 </button>
               </div>
               {isCartEmpty ? (
-                <p className={styles.emptyCartMessage}>Your cart is empty.</p>
+                <p className={styles.emptyCartMessage}>Tu carrito esta vacio.</p>
               ) : (
                 <ul className={styles.itemList}>
                   {cart.map((item) => (

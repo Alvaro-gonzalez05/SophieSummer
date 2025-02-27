@@ -209,12 +209,12 @@ export default function Checkout() {
     <main className={styles.main}>
       <Script src="https://sdk.mercadopago.com/js/v2" />
       <BackButton />
-      <h1 className={styles.title}>Checkout</h1>
+      <h1 className={styles.title}>Finalizar Compra</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
         {/* Form fields */}
         <div className={styles.formGroup}>
           <label htmlFor="name" className={styles.label}>
-            Name
+            Nombre
           </label>
           <input
             type="text"
@@ -242,7 +242,7 @@ export default function Checkout() {
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="address" className={styles.label}>
-            Address
+            Direccion
           </label>
           <input
             type="text"
@@ -256,7 +256,7 @@ export default function Checkout() {
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="phone" className={styles.label}>
-            Phone
+            Telefono
           </label>
           <input
             type="tel"
@@ -269,12 +269,12 @@ export default function Checkout() {
           />
         </div>
         <div className={styles.orderSummary}>
-          <h2 className={styles.summaryTitle}>Order Summary</h2>
+          <h2 className={styles.summaryTitle}>Detalle de compra: </h2>
           <ul className={styles.itemList}>
             {cart.map((item) => (
               <li key={`${item.id}-${item.selectedSize}`} className={styles.item}>
                 <span>
-                  {item.name} (Size: {item.selectedSize}) x{item.quantity}
+                  {item.name} (Talle: {item.selectedSize}) x{item.quantity}
                 </span>
                 <span>${(item.price * item.quantity).toFixed(2)}</span>
               </li>
@@ -310,7 +310,7 @@ export default function Checkout() {
               animate={isSubmitting || isSuccess ? { opacity: 0 } : { opacity: 1 }}
               transition={{ duration: 0.3 }}
             >
-              {isSubmitting ? "Processing..." : isSuccess ? "Order Placed!" : "Place Order (Email)"}
+              {isSubmitting ? "Processing..." : isSuccess ? "Order Placed!" : "Cordinar pago con vendedor (10%OFF *TRANFERENCIA)"}
             </motion.span>
           </motion.button>
           <button
@@ -319,7 +319,7 @@ export default function Checkout() {
             className={styles.mercadoPagoButton}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Processing..." : "Pay with Mercado Pago"}
+            {isSubmitting ? "Processing..." : "Pagar Con Mercado Pago"}
           </button>
           <div className="cho-container"></div>
         </div>
