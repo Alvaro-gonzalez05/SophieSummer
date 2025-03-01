@@ -1,12 +1,10 @@
 [
   {
     "id": 1,
-    "name": "Summer Breeze Bikini",
+    "name": "Set 3 Piezas Green",
     "price": 38500,
     "sizes": [
-      "90",
-      "95",
-      "100"
+      "T.U"
     ],
     "image": "./assets/conjuntoverde.jpeg",
     "category": "conjuntos",
@@ -14,12 +12,10 @@
   },
   {
     "id": 2,
-    "name": "Tropical Paradise Bikini",
+    "name": "Set 2 Piezas Coco",
     "price": 25000,
     "sizes": [
-      "90",
-      "95",
-      "100"
+      "T.U"
     ],
     "image": "./assets/conjunto2.jpeg",
     "category": "conjuntos",
@@ -27,7 +23,7 @@
   },
   {
     "id": 3,
-    "name": "Lace Dream Lingerie Set",
+    "name": "Set 2 Piezas Beige Coco",
     "price": 25000,
     "sizes": [
       "T.U"
@@ -38,12 +34,10 @@
   },
   {
     "id": 4,
-    "name": "Silk Touch Underwear",
+    "name": "Set 2 Piezas White Comfy",
     "price": 20000,
     "sizes": [
-      "90",
-      "95",
-      "100"
+      "T.U"
     ],
     "image": "./assets/ropainterior1.jpeg",
     "category": "ropa interior",
@@ -51,12 +45,10 @@
   },
   {
     "id": 5,
-    "name": "Elegant Evening Ensemble",
+    "name": "Set 2 Piezas Black Summer",
     "price": 20000,
     "sizes": [
-      "90",
-      "95",
-      "100"
+      "T.U"
     ],
     "image": "./assets/ropainterior2.jpeg",
     "category": "ropa interior",
@@ -64,12 +56,11 @@
   },
   {
     "id": 6,
-    "name": "Casual Chic Set",
+    "name": "Set Interior Basic",
     "price": 20000,
     "sizes": [
       "90",
-      "95",
-      "100"
+      "95"
     ],
     "image": "./assets/ropainterior3.jpeg",
     "category": "ropa interior",
@@ -77,7 +68,7 @@
   },
   {
     "id": 7,
-    "name": "Tropical Paradise Bikini",
+    "name": "Bikini Serena Black",
     "price": 38500,
     "sizes": [
       "90",
@@ -90,7 +81,7 @@
   },
   {
     "id": 8,
-    "name": "Tropical Paradise Bikini",
+    "name": "Bikini Tini Beige",
     "price": 38500,
     "sizes": [
       "90",
@@ -103,7 +94,7 @@
   },
   {
     "id": 9,
-    "name": "Tropical Paradise Bikini",
+    "name": "Bikini Africa",
     "price": 38500,
     "sizes": [
       "90",
